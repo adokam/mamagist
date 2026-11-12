@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_tasks: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          max_week: number | null
+          min_week: number | null
+          sort_order: number
+          stage: Database["public"]["Enums"]["life_stage"]
+          title: string
+          trimester: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_week?: number | null
+          min_week?: number | null
+          sort_order?: number
+          stage: Database["public"]["Enums"]["life_stage"]
+          title: string
+          trimester?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_week?: number | null
+          min_week?: number | null
+          sort_order?: number
+          stage?: Database["public"]["Enums"]["life_stage"]
+          title?: string
+          trimester?: number | null
+        }
+        Relationships: []
+      }
       private_profiles: {
         Row: {
           baby_birth_date: string | null
@@ -97,6 +133,38 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      task_completions: {
+        Row: {
+          completed_on: string
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_on: string
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          completed_on?: string
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_completions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "daily_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
