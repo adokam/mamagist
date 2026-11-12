@@ -12,6 +12,7 @@
 - `src/components` - Shared UI components; `ui/` holds base shadcn components.
 - `src/components/BottomBar.tsx` - Shared bottom bar (Home, Debby, Community, Daily, Profile). Shown on pages under the `_tabs` layout route; /login and /signup have no bar.
 - `src/legal` - Terms of use and privacy policy text.
+- `docs/design` - The design screenshots. Every screen must match them.
 - `src/config` - App-wide constants (`constants.ts`). No secrets.
 - `src/integrations/supabase` - Generated Supabase client and database types. Do not edit by hand.
 - `src/routes` - App pages (TanStack Router, file-based).
