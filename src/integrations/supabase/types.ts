@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      private_profiles: {
+        Row: {
+          baby_birth_date: string | null
+          created_at: string
+          due_date: string | null
+          first_baby: boolean | null
+          full_name: string | null
+          id: string
+          language: string | null
+          last_period_date: string | null
+          privacy_accepted_at: string | null
+          reminder_time: string | null
+          reminders_enabled: boolean
+          stage: Database["public"]["Enums"]["life_stage"] | null
+          state: string | null
+          terms_accepted_at: string | null
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          baby_birth_date?: string | null
+          created_at?: string
+          due_date?: string | null
+          first_baby?: boolean | null
+          full_name?: string | null
+          id: string
+          language?: string | null
+          last_period_date?: string | null
+          privacy_accepted_at?: string | null
+          reminder_time?: string | null
+          reminders_enabled?: boolean
+          stage?: Database["public"]["Enums"]["life_stage"] | null
+          state?: string | null
+          terms_accepted_at?: string | null
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          baby_birth_date?: string | null
+          created_at?: string
+          due_date?: string | null
+          first_baby?: boolean | null
+          full_name?: string | null
+          id?: string
+          language?: string | null
+          last_period_date?: string | null
+          privacy_accepted_at?: string | null
+          reminder_time?: string | null
+          reminders_enabled?: boolean
+          stage?: Database["public"]["Enums"]["life_stage"] | null
+          state?: string | null
+          terms_accepted_at?: string | null
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -71,6 +128,7 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"
+      life_stage: "pregnant" | "new_mother" | "breastfeeding"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -199,6 +257,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "moderator", "admin"],
+      life_stage: ["pregnant", "new_mother", "breastfeeding"],
     },
   },
 } as const
