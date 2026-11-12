@@ -10,6 +10,7 @@
 - `src/features/settings` - Language, timezone, reminders, legal links, account deletion.
 - `src/features/community` - Phase 2 community. For now only the notify_list waiting list.
 - `src/components` - Shared UI components; `ui/` holds base shadcn components.
+- `src/components/BottomBar.tsx` - Shared bottom bar (Home, Debby, Community, Daily, Profile). Shown on pages under the `_tabs` layout route; /login and /signup have no bar.
 - `src/legal` - Terms of use and privacy policy text.
 - `src/config` - App-wide constants (`constants.ts`). No secrets.
 - `src/integrations/supabase` - Generated Supabase client and database types. Do not edit by hand.
@@ -43,4 +44,11 @@ Storage bucket `avatars`: 1 MB limit, image extensions only, users can only writ
 6. `src/integrations/supabase/types.ts` can be regenerated with `supabase gen types typescript --project-id <ref>`.
 
 ## Design tokens
-Added in the next step.
+Defined in `src/styles.css` as CSS variables (light in `:root`, dark in `.dark`) and mapped to Tailwind tokens. Use the Tailwind classes (`bg-background`, `bg-card`, `text-foreground`, `bg-primary`, `bg-coral`, ...), never raw hex values.
+- `background`: light cream #FFF8F0, dark #101A15
+- `card`: light peach #FDE3D6, dark #243A2F
+- `foreground` (text): light deep green #1F4D3A, dark cream #FFF8F0
+- `primary` (buttons): light deep green #1F4D3A, dark peach #F8B79F
+- `coral` #F28B6D: progress bars and small accents only, never text
+- `shell`: plain background behind the 430px app column on big screens
+- Font: Nunito (Google Fonts), falling back to system fonts. Corner radius token `--radius` is 1.25rem.

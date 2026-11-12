@@ -21,7 +21,7 @@ function SideItem({ item }: { item: BarItem }) {
   return (
     <Link
       to={item.to}
-      className="group flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-1.5 text-foreground"
+      className="group flex min-h-11 min-w-11 flex-1 flex-col items-center justify-end gap-1 rounded-2xl pb-1.5 text-foreground"
     >
       <Icon className="h-6 w-6 shrink-0" strokeWidth={2.2} aria-hidden />
       <span className="rounded-full px-3 py-0.5 text-sm font-bold group-data-[status=active]:bg-card">

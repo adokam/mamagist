@@ -33,3 +33,4 @@ use the editor.
 - Feature code lives in `src/features/<feature>`; shared constants in `src/config/constants.ts` — keeps features portable and easy to find.
 - Every table referencing `auth.users` uses ON DELETE CASCADE — account deletion must remove all of a user's data.
 - Roles live only in `public.user_roles`, writable only by the service role — prevents privilege escalation.
+- Pages with the bottom bar are children of the pathless `src/routes/_tabs.tsx` layout; full-screen pages (login, signup) sit outside it — keeps the bar in one place.
