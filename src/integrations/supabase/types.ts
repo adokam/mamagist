@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["chat_role"]
+          safety_triggered: boolean
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["chat_role"]
+          safety_triggered?: boolean
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["chat_role"]
+          safety_triggered?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_summaries: {
+        Row: {
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_tasks: {
         Row: {
           created_at: string
@@ -196,6 +241,7 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"
+      chat_role: "user" | "assistant"
       life_stage: "pregnant" | "new_mother" | "breastfeeding"
     }
     CompositeTypes: {
@@ -325,6 +371,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "moderator", "admin"],
+      chat_role: ["user", "assistant"],
       life_stage: ["pregnant", "new_mother", "breastfeeding"],
     },
   },
