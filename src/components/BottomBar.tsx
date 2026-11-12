@@ -50,7 +50,7 @@ export function BottomBar() {
           <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground ring-[6px] ring-background">
             <Users className="h-7 w-7" strokeWidth={2} aria-hidden />
           </span>
-          <span className="mt-1 text-sm leading-tight font-bold">Community</span>
+          <span className="mt-3 text-sm leading-tight font-bold">Community</span>
         </Link>
 
         {rightItems.map((item) => (
