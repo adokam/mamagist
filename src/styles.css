@@ -58,6 +58,8 @@
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
   --color-coral: var(--coral);
+  --color-coral-track: var(--coral-track);
+  --color-surface: var(--surface);
   --color-shell: var(--shell);
   --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --color-chart-1: var(--chart-1);
@@ -85,7 +87,7 @@
   --popover: oklch(0.982 0.013 71.3);
   --popover-foreground: oklch(0.382 0.061 163.9);
   --primary: oklch(0.382 0.061 163.9); /* deep green buttons */
-  --primary-foreground: oklch(0.982 0.013 71.3);
+  --primary-foreground: oklch(1 0 0); /* white button text */
   --secondary: oklch(0.934 0.034 48.3);
   --secondary-foreground: oklch(0.382 0.061 163.9);
   --muted: oklch(0.944 0.016 73.7);
@@ -93,11 +95,13 @@
   --accent: oklch(0.934 0.034 48.3);
   --accent-foreground: oklch(0.382 0.061 163.9);
   --coral: oklch(0.741 0.133 37.1); /* #F28B6D: progress bars and small accents only, never text */
+  --coral-track: oklch(0.878 0.054 47.5); /* light peach progress track #F6CDB9 */
+  --surface: oklch(1 0 0); /* white cards, inputs and the bottom bar */
   --shell: oklch(0.944 0.016 73.7); /* plain page behind the app column on big screens */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.982 0.013 71.3);
-  --border: oklch(0.382 0.061 163.9 / 12%);
-  --input: oklch(0.382 0.061 163.9 / 20%);
+  --border: oklch(0.882 0.025 55); /* thin peach line #E8D6CA */
+  --input: oklch(0.882 0.025 55);
   --ring: oklch(0.382 0.061 163.9 / 40%);
   --chart-1: oklch(0.741 0.133 37.1);
   --chart-2: oklch(0.382 0.061 163.9);
@@ -131,6 +135,8 @@
   --accent: oklch(0.326 0.034 162);
   --accent-foreground: oklch(0.982 0.013 71.3);
   --coral: oklch(0.741 0.133 37.1);
+  --coral-track: oklch(0.326 0.034 162);
+  --surface: oklch(0.254 0.022 166.2);
   --shell: oklch(0.165 0.011 163.2);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.982 0.013 71.3);
@@ -164,4 +170,11 @@
     font-size: 1.0625rem;
     -webkit-font-smoothing: antialiased;
   }
+}
+
+/* Shared page shell: 24px side padding and generous top padding on every page. */
+@utility page-shell {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 2.5rem;
 }

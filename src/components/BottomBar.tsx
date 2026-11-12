@@ -21,10 +21,10 @@ function SideItem({ item }: { item: BarItem }) {
   return (
     <Link
       to={item.to}
-      className="group flex min-h-11 min-w-11 flex-1 flex-col items-center justify-end gap-1 rounded-2xl pb-1.5 text-foreground"
+      className="group flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-1 text-foreground"
     >
-      <Icon className="h-6 w-6 shrink-0" strokeWidth={2.2} aria-hidden />
-      <span className="rounded-full px-3 py-0.5 text-sm font-bold group-data-[status=active]:bg-card">
+      <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={2} aria-hidden />
+      <span className="rounded-2xl px-4 py-1.5 text-sm leading-tight font-medium group-data-[status=active]:bg-card group-data-[status=active]:font-bold">
         {item.label}
       </span>
     </Link>
@@ -36,23 +36,21 @@ export function BottomBar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[430px] border-t border-border bg-background pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[430px] border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="flex h-[76px] items-stretch px-2">
+      <div className="flex h-[78px] items-stretch px-3">
         {leftItems.map((item) => (
           <SideItem key={item.to} item={item} />
         ))}
 
         <Link
           to="/community"
-          className="group flex min-w-11 flex-1 flex-col items-center justify-end gap-1 pb-1.5 text-foreground"
+          className="flex min-w-11 flex-1 flex-col items-center justify-end gap-0.5 pb-2 text-foreground"
         >
-          <span className="-mt-9 grid h-16 w-16 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg ring-[6px] ring-background">
-            <Users className="h-7 w-7" strokeWidth={2.2} aria-hidden />
+          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground ring-[6px] ring-background">
+            <Users className="h-7 w-7" strokeWidth={2} aria-hidden />
           </span>
-          <span className="rounded-full px-3 py-0.5 text-sm font-bold group-data-[status=active]:bg-card">
-            Community
-          </span>
+          <span className="mt-1 text-sm leading-tight font-bold">Community</span>
         </Link>
 
         {rightItems.map((item) => (
