@@ -1,17 +1,37 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createRouter, rootRouteId } from "@tanstack/react-router";
+import { createMemoryHistory, createRouter } from "@tanstack/react-router";
 import { describe, expect, it } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
 
-// Match routes without running loaders or rendering: loaders may need a server or
-// network the test run lacks, and jsdom never loads the stylesheets React waits on.
-describe("App routing", () => {
-  it("matches a page for / instead of falling back to not found", () => {
-    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-
-    const matches = router.matchRoutes("/");
-
-    expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
+function makeRouter(path: string) {
+  return createRouter({
+    routeTree,
+    context: { queryClient: new QueryClient() },
+    history: createMemoryHistory({ initialEntries: [path] }),
   });
+}
+
+describe("App routing", () => {
+  it("sends / to /home", async () => {
+    const router = makeRouter("/");
+    await router.load();
+    expect(router.state.location.pathname).toBe("/home");
+  });
+
+  it("sends unknown addresses to /home", async () => {
+    const router = makeRouter("/no-such-page");
+    await router.load();
+    expect(router.state.location.pathname).toBe("/home");
+  });
+
+  it.each(["/home", "/debby", "/community", "/daily", "/profile", "/login", "/signup"])(
+    "has a page at %s",
+    (path) => {
+      const router = makeRouter(path);
+      const leaf = router.matchRoutes(path).at(-1)?.routeId;
+      expect(leaf).not.toBe("/$");
+      expect(leaf).not.toBe("__root__");
+    },
+  );
 });

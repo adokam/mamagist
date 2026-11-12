@@ -10,33 +10,144 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SplatRouteImport } from './routes/$'
+import { Route as TabsRouteImport } from './routes/_tabs'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TabsCommunityRouteImport } from './routes/_tabs.community'
+import { Route as TabsDailyRouteImport } from './routes/_tabs.daily'
+import { Route as TabsDebbyRouteImport } from './routes/_tabs.debby'
+import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
+import { Route as TabsProfileRouteImport } from './routes/_tabs.profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TabsRoute = TabsRouteImport.update({
+  id: '/_tabs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TabsCommunityRoute = TabsCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => TabsRoute,
+} as any)
+const TabsDailyRoute = TabsDailyRouteImport.update({
+  id: '/daily',
+  path: '/daily',
+  getParentRoute: () => TabsRoute,
+} as any)
+const TabsDebbyRoute = TabsDebbyRouteImport.update({
+  id: '/debby',
+  path: '/debby',
+  getParentRoute: () => TabsRoute,
+} as any)
+const TabsHomeRoute = TabsHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => TabsRoute,
+} as any)
+const TabsProfileRoute = TabsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => TabsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/community': typeof TabsCommunityRoute
+  '/daily': typeof TabsDailyRoute
+  '/debby': typeof TabsDebbyRoute
+  '/home': typeof TabsHomeRoute
+  '/profile': typeof TabsProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/community': typeof TabsCommunityRoute
+  '/daily': typeof TabsDailyRoute
+  '/debby': typeof TabsDebbyRoute
+  '/home': typeof TabsHomeRoute
+  '/profile': typeof TabsProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/_tabs': typeof TabsRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/_tabs/community': typeof TabsCommunityRoute
+  '/_tabs/daily': typeof TabsDailyRoute
+  '/_tabs/debby': typeof TabsDebbyRoute
+  '/_tabs/home': typeof TabsHomeRoute
+  '/_tabs/profile': typeof TabsProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/login'
+    | '/signup'
+    | '/community'
+    | '/daily'
+    | '/debby'
+    | '/home'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/$'
+    | '/login'
+    | '/signup'
+    | '/community'
+    | '/daily'
+    | '/debby'
+    | '/home'
+    | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/_tabs'
+    | '/login'
+    | '/signup'
+    | '/_tabs/community'
+    | '/_tabs/daily'
+    | '/_tabs/debby'
+    | '/_tabs/home'
+    | '/_tabs/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
+  TabsRoute: typeof TabsRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +159,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_tabs': {
+      id: '/_tabs'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof TabsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_tabs/community': {
+      id: '/_tabs/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof TabsCommunityRouteImport
+      parentRoute: typeof TabsRoute
+    }
+    '/_tabs/daily': {
+      id: '/_tabs/daily'
+      path: '/daily'
+      fullPath: '/daily'
+      preLoaderRoute: typeof TabsDailyRouteImport
+      parentRoute: typeof TabsRoute
+    }
+    '/_tabs/debby': {
+      id: '/_tabs/debby'
+      path: '/debby'
+      fullPath: '/debby'
+      preLoaderRoute: typeof TabsDebbyRouteImport
+      parentRoute: typeof TabsRoute
+    }
+    '/_tabs/home': {
+      id: '/_tabs/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof TabsHomeRouteImport
+      parentRoute: typeof TabsRoute
+    }
+    '/_tabs/profile': {
+      id: '/_tabs/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof TabsProfileRouteImport
+      parentRoute: typeof TabsRoute
+    }
   }
 }
 
+interface TabsRouteChildren {
+  TabsCommunityRoute: typeof TabsCommunityRoute
+  TabsDailyRoute: typeof TabsDailyRoute
+  TabsDebbyRoute: typeof TabsDebbyRoute
+  TabsHomeRoute: typeof TabsHomeRoute
+  TabsProfileRoute: typeof TabsProfileRoute
+}
+
+const TabsRouteChildren: TabsRouteChildren = {
+  TabsCommunityRoute: TabsCommunityRoute,
+  TabsDailyRoute: TabsDailyRoute,
+  TabsDebbyRoute: TabsDebbyRoute,
+  TabsHomeRoute: TabsHomeRoute,
+  TabsProfileRoute: TabsProfileRoute,
+}
+
+const TabsRouteWithChildren = TabsRoute._addFileChildren(TabsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
+  TabsRoute: TabsRouteWithChildren,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
