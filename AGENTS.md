@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Feature code lives in `src/features/<feature>`; shared constants in `src/config/constants.ts` — keeps features portable and easy to find.
+- Every table referencing `auth.users` uses ON DELETE CASCADE — account deletion must remove all of a user's data.
+- Roles live only in `public.user_roles`, writable only by the service role — prevents privilege escalation.
