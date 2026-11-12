@@ -232,6 +232,45 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_content: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_name: string | null
+          source_url: string | null
+          tip: string | null
+          title: string
+          week: number
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          tip?: string | null
+          title: string
+          week: number
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          tip?: string | null
+          title?: string
+          week?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
