@@ -5,7 +5,7 @@ export function StepProgress({ current, total }: { current: number; total: numbe
   return (
     <div className="flex gap-1.5" aria-label={`Step ${current} of ${total}`} role="group">
       {Array.from({ length: total }, (_, i) => (
-        <ProgressBar key={i} value={i < current ? 100 : 0} aria-hidden />
+        <ProgressBar key={i} value={i < current ? 100 : 0} />
       ))}
     </div>
   );
