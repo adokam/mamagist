@@ -171,7 +171,11 @@ export function SignupPage() {
 
         <div className="mt-auto space-y-4 pt-8">
           <FormError message={formError} />
-          <PrimaryButton type="submit" disabled={!parsed.success || submitting} aria-busy={submitting}>
+          <PrimaryButton
+            type="submit"
+            disabled={!parsed.success || submitting}
+            aria-busy={submitting}
+          >
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden />

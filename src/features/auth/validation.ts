@@ -20,7 +20,9 @@ export const signupSchema = z.object({
     .min(NAME_MIN, `Please enter your full name (at least ${NAME_MIN} letters).`)
     .max(NAME_MAX, `Your name can be at most ${NAME_MAX} characters.`),
   email,
-  password: z.string().min(PASSWORD_MIN, `Your password needs at least ${PASSWORD_MIN} characters.`),
+  password: z
+    .string()
+    .min(PASSWORD_MIN, `Your password needs at least ${PASSWORD_MIN} characters.`),
   acceptedTerms: z.literal(true, {
     errorMap: () => ({ message: "Please accept the Terms of Use and Privacy Policy." }),
   }),

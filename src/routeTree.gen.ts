@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as TabsRouteImport } from './routes/_tabs'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TabsCommunityRouteImport } from './routes/_tabs.community'
 import { Route as TabsDailyRouteImport } from './routes/_tabs.daily'
 import { Route as TabsDebbyRouteImport } from './routes/_tabs.debby'
@@ -39,9 +41,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TabsCommunityRoute = TabsCommunityRouteImport.update({
@@ -74,7 +86,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/community': typeof TabsCommunityRoute
   '/daily': typeof TabsDailyRoute
   '/debby': typeof TabsDebbyRoute
@@ -85,7 +99,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/community': typeof TabsCommunityRoute
   '/daily': typeof TabsDailyRoute
   '/debby': typeof TabsDebbyRoute
@@ -98,7 +114,9 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/_tabs': typeof TabsRouteWithChildren
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/_tabs/community': typeof TabsCommunityRoute
   '/_tabs/daily': typeof TabsDailyRoute
   '/_tabs/debby': typeof TabsDebbyRoute
@@ -111,7 +129,9 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/login'
+    | '/privacy'
     | '/signup'
+    | '/terms'
     | '/community'
     | '/daily'
     | '/debby'
@@ -122,7 +142,9 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/login'
+    | '/privacy'
     | '/signup'
+    | '/terms'
     | '/community'
     | '/daily'
     | '/debby'
@@ -134,7 +156,9 @@ export interface FileRouteTypes {
     | '/$'
     | '/_tabs'
     | '/login'
+    | '/privacy'
     | '/signup'
+    | '/terms'
     | '/_tabs/community'
     | '/_tabs/daily'
     | '/_tabs/debby'
@@ -147,7 +171,9 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   TabsRoute: typeof TabsRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   SignupRoute: typeof SignupRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -180,11 +206,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_tabs/community': {
@@ -248,7 +288,9 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   TabsRoute: TabsRouteWithChildren,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   SignupRoute: SignupRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

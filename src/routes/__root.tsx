@@ -83,7 +83,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Mamagist" },
       { name: "description", content: "Mamagist, a pregnancy companion for Nigerian women." },
       { property: "og:title", content: "Mamagist" },
-      { property: "og:description", content: "Mamagist, a pregnancy companion for Nigerian women." },
+      {
+        property: "og:description",
+        content: "Mamagist, a pregnancy companion for Nigerian women.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

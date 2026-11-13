@@ -31,7 +31,10 @@ export function FormField({
 export function FormError({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p role="alert" className="rounded-2xl bg-card px-5 py-4 text-[16px] font-semibold text-foreground">
+    <p
+      role="alert"
+      className="rounded-2xl bg-card px-5 py-4 text-[16px] font-semibold text-foreground"
+    >
       {message}
     </p>
   );
