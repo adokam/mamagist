@@ -21,7 +21,7 @@ export function SignupPage() {
     fullName: "",
     email: "",
     password: "",
-    acceptedTerms: false as unknown as true,
+    acceptedTerms: false,
   });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -150,9 +150,7 @@ export function SignupPage() {
               type="checkbox"
               required
               checked={values.acceptedTerms}
-              onChange={(e) =>
-                setValues((v) => ({ ...v, acceptedTerms: e.target.checked as unknown as true }))
-              }
+              onChange={(e) => setValues((v) => ({ ...v, acceptedTerms: e.target.checked }))}
               className="mt-0.5 h-6 w-6 shrink-0 accent-primary"
             />
             <label htmlFor="acceptedTerms" className="text-[17px] leading-snug text-foreground">

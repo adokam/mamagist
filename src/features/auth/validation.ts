@@ -23,9 +23,7 @@ export const signupSchema = z.object({
   password: z
     .string()
     .min(PASSWORD_MIN, `Your password needs at least ${PASSWORD_MIN} characters.`),
-  acceptedTerms: z.literal(true, {
-    errorMap: () => ({ message: "Please accept the Terms of Use and Privacy Policy." }),
-  }),
+  acceptedTerms: z.boolean().refine((v) => v, "Please accept the Terms of Use and Privacy Policy."),
 });
 
 export const loginSchema = z.object({
