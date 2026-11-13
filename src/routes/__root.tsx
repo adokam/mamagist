@@ -10,6 +10,8 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { AuthProvider } from "@/features/auth/AuthProvider";
+
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -83,7 +85,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Mamagist" },
       { name: "description", content: "Mamagist, a pregnancy companion for Nigerian women." },
       { property: "og:title", content: "Mamagist" },
-      { property: "og:description", content: "Mamagist, a pregnancy companion for Nigerian women." },
+      {
+        property: "og:description",
+        content: "Mamagist, a pregnancy companion for Nigerian women.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -126,11 +131,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* App column: full width on phones, centered 430px column on bigger screens. */}
-      <div className="mx-auto min-h-dvh w-full max-w-[430px] bg-background">
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </div>
+      <AuthProvider>
+        {/* App column: full width on phones, centered 430px column on bigger screens. */}
+        <div className="mx-auto min-h-dvh w-full max-w-[430px] bg-background">
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </div>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

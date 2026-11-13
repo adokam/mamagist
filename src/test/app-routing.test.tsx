@@ -25,13 +25,20 @@ describe("App routing", () => {
     expect(router.state.location.pathname).toBe("/home");
   });
 
-  it.each(["/home", "/debby", "/community", "/daily", "/profile", "/login", "/signup"])(
-    "has a page at %s",
-    (path) => {
-      const router = makeRouter(path);
-      const leaf = router.matchRoutes(path).at(-1)?.routeId;
-      expect(leaf).not.toBe("/$");
-      expect(leaf).not.toBe("__root__");
-    },
-  );
+  it.each([
+    "/home",
+    "/debby",
+    "/community",
+    "/daily",
+    "/profile",
+    "/login",
+    "/signup",
+    "/terms",
+    "/privacy",
+  ])("has a page at %s", (path) => {
+    const router = makeRouter(path);
+    const leaf = router.matchRoutes(path).at(-1)?.routeId;
+    expect(leaf).not.toBe("/$");
+    expect(leaf).not.toBe("__root__");
+  });
 });

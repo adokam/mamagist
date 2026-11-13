@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { GuestOnly } from "@/features/auth/AuthGuards";
 import { LoginPage } from "@/features/auth/LoginPage";
 
 export const Route = createFileRoute("/login")({
@@ -13,5 +14,14 @@ export const Route = createFileRoute("/login")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: LoginPage,
+  component: LoginPageRoute,
 });
+
+// Signed-in users go to /home.
+function LoginPageRoute() {
+  return (
+    <GuestOnly>
+      <LoginPage />
+    </GuestOnly>
+  );
+}

@@ -34,3 +34,4 @@ use the editor.
 - Every table referencing `auth.users` uses ON DELETE CASCADE — account deletion must remove all of a user's data.
 - Roles live only in `public.user_roles`, writable only by the service role — prevents privilege escalation.
 - Pages with the bottom bar are children of the pathless `src/routes/_tabs.tsx` layout; full-screen pages (login, signup) sit outside it — keeps the bar in one place.
+- Route protection runs in the browser through `AuthProvider` + `RequireAuth`/`GuestOnly` in `src/features/auth`, never server-side `beforeLoad` — the Supabase session lives in browser storage, so the server cannot see it.

@@ -2,6 +2,9 @@
 
 ## Folders
 - `src/features/auth` - Sign up, sign in, sign out, session handling.
+  - `AuthProvider` / `useAuth`: restores the session on app load, listens for sign in and sign out, exposes `user`, `loading` and `signOut`.
+  - `AuthGuards`: `RequireAuth` (used by the `_tabs` layout) and `GuestOnly` (used by /login and /signup), plus the loading screen shown while the session is checked.
+  - `SignupPage` (/signup, step 1 of 3) and `LoginPage` (/login). Form rules are in `validation.ts`; friendly error messages in `authErrors.ts`.
 - `src/features/profile` - Public profile (profiles) and private profile (private_profiles).
 - `src/features/pregnancy-calculator` - Due date, current week and trimester calculations.
 - `src/features/daily-checklist` - Daily tasks and per-day completions.
@@ -11,7 +14,8 @@
 - `src/features/community` - Phase 2 community. For now only the notify_list waiting list.
 - `src/components` - Shared UI components; `ui/` holds base shadcn components.
 - `src/components/BottomBar.tsx` - Shared bottom bar (Home, Debby, Community, Daily, Profile). Shown on pages under the `_tabs` layout route; /login and /signup have no bar.
-- `src/legal` - Terms of use and privacy policy text.
+- `src/legal` - Terms of use and privacy policy pages (/terms, /privacy). Draft text for now.
+- Route rules: signed-out visitors on /home, /debby, /community, /daily or /profile go to /login. Signed-in users on /login or /signup go to /home. /terms and /privacy are open to everyone. The bottom bar is hidden on /login, /signup, /terms and /privacy.
 - `docs/design` - The design screenshots. Every screen must match them.
 - `src/config` - App-wide constants (`constants.ts`). No secrets.
 - `src/integrations/supabase` - Generated Supabase client and database types. Do not edit by hand.
@@ -33,6 +37,7 @@ Every user_id / id that points to auth.users uses ON DELETE CASCADE: deleting an
 - `notify_list` - Owner can insert and read her own rows. One row per user and topic.
 
 Signup trigger `on_auth_user_created` (function `handle_new_user`, security definer, fixed search_path) creates a profiles, private_profiles and user_roles (role user) row for every new user.
+Migration `20261113100220` replaces `handle_new_user` so it also saves the signup metadata: `full_name` goes into private_profiles.full_name, and when `terms_accepted` is true, terms_accepted_at and privacy_accepted_at are set to now() on the server. The trigger, tables and policies are unchanged.
 
 Storage bucket `avatars`: 1 MB limit, image extensions only, users can only write inside a folder named with their own user id. Currently private (see report).
 
@@ -51,5 +56,7 @@ Defined in `src/styles.css` as CSS variables (light in `:root`, dark in `.dark`)
 - `foreground` (text): light deep green #1F4D3A, dark cream #FFF8F0
 - `primary` (buttons): light deep green #1F4D3A, dark peach #F8B79F
 - `coral` #F28B6D: progress bars and small accents only, never text
+- `surface` (white): light #FFFFFF, used for cards, text inputs and the bottom bar
+- `coral-track` (light peach progress track): light #F6CDB9, the empty part of progress bars
 - `shell`: plain background behind the 430px app column on big screens
 - Font: Nunito (Google Fonts), falling back to system fonts. Corner radius token `--radius` is 1.25rem.
