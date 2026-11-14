@@ -33,6 +33,8 @@ describe("App routing", () => {
     "/profile",
     "/login",
     "/signup",
+    "/signup/period",
+    "/signup/details",
     "/terms",
     "/privacy",
   ])("has a page at %s", (path) => {

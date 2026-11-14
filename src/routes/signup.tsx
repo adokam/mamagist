@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { GuestOnly } from "@/features/auth/AuthGuards";
 import { SignupPage } from "@/features/auth/SignupPage";
@@ -17,11 +18,12 @@ export const Route = createFileRoute("/signup")({
   component: SignupPageRoute,
 });
 
-// Signed-in users go to /home.
+// Signed-in users go to /home. While her new account is being created, she goes on to step 2.
 function SignupPageRoute() {
+  const [signingUp, setSigningUp] = useState(false);
   return (
-    <GuestOnly>
-      <SignupPage />
+    <GuestOnly to={signingUp ? "/signup/period" : "/home"}>
+      <SignupPage onSigningUp={setSigningUp} />
     </GuestOnly>
   );
 }

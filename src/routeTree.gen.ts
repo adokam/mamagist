@@ -21,6 +21,8 @@ import { Route as TabsDailyRouteImport } from './routes/_tabs.daily'
 import { Route as TabsDebbyRouteImport } from './routes/_tabs.debby'
 import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
 import { Route as TabsProfileRouteImport } from './routes/_tabs.profile'
+import { Route as SignupDetailsRouteImport } from './routes/signup_.details'
+import { Route as SignupPeriodRouteImport } from './routes/signup_.period'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -81,6 +83,16 @@ const TabsProfileRoute = TabsProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => TabsRoute,
 } as any)
+const SignupDetailsRoute = SignupDetailsRouteImport.update({
+  id: '/signup_/details',
+  path: '/signup/details',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupPeriodRoute = SignupPeriodRouteImport.update({
+  id: '/signup_/period',
+  path: '/signup/period',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -94,6 +106,8 @@ export interface FileRoutesByFullPath {
   '/debby': typeof TabsDebbyRoute
   '/home': typeof TabsHomeRoute
   '/profile': typeof TabsProfileRoute
+  '/signup/details': typeof SignupDetailsRoute
+  '/signup/period': typeof SignupPeriodRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,6 +121,8 @@ export interface FileRoutesByTo {
   '/debby': typeof TabsDebbyRoute
   '/home': typeof TabsHomeRoute
   '/profile': typeof TabsProfileRoute
+  '/signup/details': typeof SignupDetailsRoute
+  '/signup/period': typeof SignupPeriodRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,6 +138,8 @@ export interface FileRoutesById {
   '/_tabs/debby': typeof TabsDebbyRoute
   '/_tabs/home': typeof TabsHomeRoute
   '/_tabs/profile': typeof TabsProfileRoute
+  '/signup_/details': typeof SignupDetailsRoute
+  '/signup_/period': typeof SignupPeriodRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,6 +155,8 @@ export interface FileRouteTypes {
     | '/debby'
     | '/home'
     | '/profile'
+    | '/signup/details'
+    | '/signup/period'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,6 +170,8 @@ export interface FileRouteTypes {
     | '/debby'
     | '/home'
     | '/profile'
+    | '/signup/details'
+    | '/signup/period'
   id:
     | '__root__'
     | '/'
@@ -164,6 +186,8 @@ export interface FileRouteTypes {
     | '/_tabs/debby'
     | '/_tabs/home'
     | '/_tabs/profile'
+    | '/signup_/details'
+    | '/signup_/period'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,6 +198,8 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  SignupDetailsRoute: typeof SignupDetailsRoute
+  SignupPeriodRoute: typeof SignupPeriodRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -262,6 +288,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsProfileRouteImport
       parentRoute: typeof TabsRoute
     }
+    '/signup_/details': {
+      id: '/signup_/details'
+      path: '/signup/details'
+      fullPath: '/signup/details'
+      preLoaderRoute: typeof SignupDetailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup_/period': {
+      id: '/signup_/period'
+      path: '/signup/period'
+      fullPath: '/signup/period'
+      preLoaderRoute: typeof SignupPeriodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -291,6 +331,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  SignupDetailsRoute: SignupDetailsRoute,
+  SignupPeriodRoute: SignupPeriodRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

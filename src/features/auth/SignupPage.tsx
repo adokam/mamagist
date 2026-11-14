@@ -15,7 +15,7 @@ import { fieldErrors, signupSchema, type SignupValues } from "./validation";
 
 const linkClass = "font-bold underline underline-offset-4";
 
-export function SignupPage() {
+export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => void }) {
   const navigate = useNavigate();
   const [values, setValues] = useState<SignupValues>({
     fullName: "",
@@ -41,13 +41,15 @@ export function SignupPage() {
 
     setSubmitting(true);
     setFormError(null);
+    onSigningUp?.(true);
+    let signedIn = false;
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: { full_name: fullName, terms_accepted: true },
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/signup/period`,
         },
       });
       if (error) {
@@ -60,13 +62,15 @@ export function SignupPage() {
         return;
       }
       if (data.session) {
-        await navigate({ to: "/home", replace: true });
+        signedIn = true;
+        await navigate({ to: "/signup/period", replace: true });
         return;
       }
       setCheckEmailFor(email);
     } catch (error) {
       setFormError(friendlyAuthError(error, "signup"));
     } finally {
+      if (!signedIn) onSigningUp?.(false);
       setSubmitting(false);
     }
   }
