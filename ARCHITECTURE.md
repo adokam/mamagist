@@ -60,3 +60,29 @@ Defined in `src/styles.css` as CSS variables (light in `:root`, dark in `.dark`)
 - `coral-track` (light peach progress track): light #F6CDB9, the empty part of progress bars
 - `shell`: plain background behind the 430px app column on big screens
 - Font: Nunito (Google Fonts), falling back to system fonts. Corner radius token `--radius` is 1.25rem.
+## Pregnancy calculator
+
+Location: src/features/pregnancy-calculator
+
+Plain functions with no screen code and no AI. Other features can reuse them.
+
+- dueDateFromLastPeriod: adds 280 days to the last period date.
+- lastPeriodFromDueDate: subtracts 280 days from the due date.
+- pregnancyAge: returns weeks, days, and trimester for a given day.
+- validateLastPeriod: rejects future dates and dates more than 44 weeks old.
+
+The functions use PREGNANCY_DAYS (280) and MAX_PREGNANCY_WEEKS (44) from src/config/constants.ts. They work on plain calendar dates only, with no time of day. "Today" is the date in the user's own time zone. Unit tests sit next to the functions.
+
+Trimesters: 1 is up to 13 weeks 6 days. 2 is 14 weeks 0 days to 27 weeks 6 days. 3 is 28 weeks and later.
+
+## Signup flow
+
+- /signup: step 1 of 3. Name, email, password, and acceptance of the Terms and Privacy Policy.
+- /signup/period: step 2 of 3. Last period date or due date. Saves last_period_date and due_date to private_profiles. Signed in users only.
+- /signup/details: step 3 of 3. Stage, first baby, state, and baby birth date (new mothers only). Saves to private_profiles. Signed in users only.
+
+Both step 2 and step 3 can be skipped. The app must work fully with no date. Dates and health details are never logged to the console or to analytics.
+
+## States list
+
+src/config/nigerian-states.ts holds the 36 states and the Federal Capital Territory. It feeds the state dropdown in step 3.
