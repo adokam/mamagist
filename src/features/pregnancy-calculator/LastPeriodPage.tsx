@@ -21,7 +21,14 @@ import {
   pregnancyAgeSentence,
   validateLastPeriod,
 } from "./calculator";
-import { addDays, formatCalendarDate, parseIsoDate, toIsoDate, type CalendarDate } from "./calendarDate";
+import {
+  addDays,
+  formatCalendarDate,
+  parseIsoDate,
+  toIsoDate,
+  todayInLocalTimeZone,
+  type CalendarDate,
+} from "./calendarDate";
 
 type Mode = "period" | "due";
 
@@ -48,15 +55,8 @@ export function LastPeriodPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [today] = useState(() => {
-    // Read once per visit so the result does not jump at midnight while she is on the screen.
-    return new Date();
-  });
-  const todayDate: CalendarDate = {
-    year: today.getFullYear(),
-    month: today.getMonth() + 1,
-    day: today.getDate(),
-  };
+  // Her phone's date, read once per visit so the result does not jump at midnight.
+  const [todayDate] = useState(() => todayInLocalTimeZone());
   const [mode, setMode] = useState<Mode>("period");
   const [values, setValues] = useState<Record<Mode, string>>({ period: "", due: "" });
   const [saving, setSaving] = useState(false);
