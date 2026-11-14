@@ -26,10 +26,16 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-/** Signed-in users are sent to /home (used on /login and /signup). */
-export function GuestOnly({ children }: { children: ReactNode }) {
+/** Signed-in users are sent to /home (used on /login and /signup), or to `to` when given. */
+export function GuestOnly({
+  children,
+  to = "/home",
+}: {
+  children: ReactNode;
+  to?: "/home" | "/signup/period";
+}) {
   const { user, loading } = useAuth();
   if (loading) return <AuthLoadingScreen />;
-  if (user) return <Navigate to="/home" replace />;
+  if (user) return <Navigate to={to} replace />;
   return <>{children}</>;
 }
