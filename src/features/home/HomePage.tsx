@@ -1,0 +1,188 @@
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import { useState } from "react";
+
+import { PrimaryButton } from "@/components/Buttons";
+import { PeachCard, WhiteCard } from "@/components/Cards";
+import { LoadError } from "@/components/LoadError";
+import { PageHeader } from "@/components/PageHeader";
+import { ProgressBar } from "@/components/ProgressBar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/features/auth/AuthProvider";
+import {
+  formatCalendarDate,
+  todayInLocalTimeZone,
+} from "@/features/pregnancy-calculator/calendarDate";
+import { profileSummaryQuery } from "@/features/profile/privateProfile";
+import { supabase } from "@/integrations/supabase/client";
+
+import { babyAgeText, greeting, homeCard, trimesterName, weeksAndDays, type HomeCard } from "./homeSummary";
+
+function weeklyTipQuery(week: number | null) {
+  return {
+    queryKey: ["weekly-content", week] as const,
+    enabled: week !== null,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("weekly_content")
+        .select("tip")
+        .eq("week", week ?? 0)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.tip?.trim() || null;
+    },
+  };
+}
+
+export function HomePage() {
+  const { user } = useAuth();
+  // Her phone's date and hour, read once per visit.
+  const [now] = useState(() => new Date());
+  const today = todayInLocalTimeZone(now);
+
+  const profile = useQuery(profileSummaryQuery(user?.id ?? ""));
+  const card = profile.data ? homeCard(profile.data, today) : null;
+  const tipWeek = card?.kind === "pregnancy" ? card.tipWeek : null;
+  const tip = useQuery(weeklyTipQuery(tipWeek));
+
+  const failed = profile.isError || tip.isError;
+  const loading = profile.isPending || (tipWeek !== null && tip.isPending);
+
+  return (
+    <main className="page-shell">
+      {failed ? (
+        <div className="space-y-6">
+          <PageHeader label="Mamagist" title={greeting(now.getHours(), null)} />
+          <LoadError
+            onRetry={() => {
+              if (profile.isError) void profile.refetch();
+              if (tip.isError) void tip.refetch();
+            }}
+          />
+        </div>
+      ) : loading || !card ? (
+        <HomeSkeleton />
+      ) : (
+        <div className="space-y-4">
+          <div className="mb-6">
+            <PageHeader label="Mamagist" title={greeting(now.getHours(), profile.data?.full_name ?? null)} />
+          </div>
+          <StageCard card={card} />
+          <ChecklistCard />
+          <AskDebbyCard />
+          {card.kind === "pregnancy" && tip.data ? (
+            <WhiteCard>
+              <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
+              <p className="mt-2 text-[17px] leading-relaxed text-foreground">{tip.data}</p>
+            </WhiteCard>
+          ) : null}
+        </div>
+      )}
+    </main>
+  );
+}
+
+function HomeSkeleton() {
+  return (
+    <div className="space-y-4" aria-busy="true" aria-label="Loading">
+      <div className="mb-6 space-y-3">
+        <Skeleton className="h-5 w-24 rounded-full" />
+        <Skeleton className="h-9 w-64 rounded-full" />
+      </div>
+      <Skeleton className="h-44 w-full rounded-3xl" />
+      <Skeleton className="h-24 w-full rounded-[20px]" />
+      <Skeleton className="h-40 w-full rounded-3xl" />
+      <Skeleton className="h-28 w-full rounded-[20px]" />
+    </div>
+  );
+}
+
+function StageCard({ card }: { card: HomeCard }) {
+  const navigate = useNavigate();
+
+  if (card.kind === "no_date") {
+    return (
+      <PeachCard>
+        <h2 className="text-[22px] leading-tight font-extrabold text-foreground">Add your due date</h2>
+        <p className="mt-2 text-[17px] leading-relaxed text-foreground">
+          Add your last period or due date to see your week.
+        </p>
+        <PrimaryButton type="button" className="mt-5" onClick={() => void navigate({ to: "/pregnancy-date" })}>
+          Add date
+        </PrimaryButton>
+      </PeachCard>
+    );
+  }
+
+  if (card.kind === "baby") {
+    return (
+      <PeachCard>
+        <p className="text-[15px] font-semibold text-foreground">Your baby</p>
+        {card.babyAge ? (
+          <p className="mt-2 text-[40px] leading-tight font-extrabold tracking-tight text-foreground">
+            {babyAgeText(card.babyAge)}
+          </p>
+        ) : (
+          <p className="mt-2 text-[17px] leading-relaxed text-foreground">
+            Welcome. We are here for you and your baby.
+          </p>
+        )}
+      </PeachCard>
+    );
+  }
+
+  return (
+    <PeachCard>
+      <p className="text-[15px] font-semibold text-foreground">Your pregnancy</p>
+      <p className="mt-2 text-[40px] leading-tight font-extrabold tracking-tight text-foreground">
+        {weeksAndDays(card.age)}
+      </p>
+      <p className="mt-1 text-[17px] text-foreground">
+        {trimesterName(card.age.trimester)} · Due {formatCalendarDate(card.dueDate)}
+      </p>
+      <ProgressBar value={card.progress} className="mt-4" />
+      {card.pastFortyTwoWeeks ? (
+        <p className="mt-4 text-[17px] font-semibold text-foreground">
+          Please talk to your clinic about your next steps.
+        </p>
+      ) : null}
+    </PeachCard>
+  );
+}
+
+function ChecklistCard() {
+  return (
+    <Link
+      to="/daily"
+      className="block rounded-[20px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+    >
+      <WhiteCard className="flex items-center gap-4">
+        <div className="flex-1">
+          <h2 className="text-[20px] leading-tight font-extrabold text-foreground">Today's checklist</h2>
+          <p className="mt-1 text-[17px] text-foreground">See your tasks for today.</p>
+        </div>
+        <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
+      </WhiteCard>
+    </Link>
+  );
+}
+
+function AskDebbyCard() {
+  return (
+    <div className="rounded-3xl bg-primary p-5 text-primary-foreground">
+      <h2 className="text-[22px] leading-tight font-extrabold">Ask Debby</h2>
+      <p className="mt-2 text-[17px] leading-relaxed">
+        Tell Debby how you feel today and get advice for your week.
+      </p>
+      <Link
+        to="/debby"
+        className="mt-5 inline-flex h-12 items-center justify-center rounded-full bg-card px-6 text-[17px] font-bold text-card-foreground hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
+        Start chat
+      </Link>
+    </div>
+  );
+}

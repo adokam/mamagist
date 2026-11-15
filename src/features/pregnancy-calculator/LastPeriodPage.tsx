@@ -51,14 +51,33 @@ function calculate(mode: Mode, value: string, today: CalendarDate) {
   return { status: "valid" as const, chosen, lastPeriod, dueDate, age: pregnancyAge(lastPeriod, today) };
 }
 
+type Variant = "signup" | "edit";
+
+/** Signup step 2 at /signup/period. */
 export function LastPeriodPage() {
+  return <PregnancyDateForm variant="signup" initial={{ period: "", due: "" }} />;
+}
+
+/**
+ * The date screen, shared by signup step 2 ("signup") and /pregnancy-date ("edit").
+ * Edit has no step bar or step label, starts with her saved dates, and shows Save and Cancel.
+ */
+export function PregnancyDateForm({
+  variant,
+  initial,
+}: {
+  variant: Variant;
+  initial: Record<Mode, string>;
+}) {
+  const isEdit = variant === "edit";
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   // Her phone's date, read once per visit so the result does not jump at midnight.
   const [todayDate] = useState(() => todayInLocalTimeZone());
-  const [mode, setMode] = useState<Mode>("period");
-  const [values, setValues] = useState<Record<Mode, string>>({ period: "", due: "" });
+  // With only a saved due date, start in due date mode.
+  const [mode, setMode] = useState<Mode>(() => (!initial.period && initial.due ? "due" : "period"));
+  const [values, setValues] = useState<Record<Mode, string>>(initial);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -86,7 +105,7 @@ export function LastPeriodPage() {
         due_date: toIsoDate(result.dueDate),
       });
       await queryClient.invalidateQueries({ queryKey: privateProfileKey(user.id) });
-      await navigate({ to: "/signup/details" });
+      await navigate({ to: isEdit ? "/home" : "/signup/details" });
     } catch (e) {
       setSaveError(friendlySaveError(e));
     } finally {
@@ -95,11 +114,23 @@ export function LastPeriodPage() {
   }
 
   return (
-    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]">
-      <StepProgress current={2} total={3} />
-      <div className="mt-8">
-        <PageHeader label="Step 2 of 3" title="When did your last period start?" />
-      </div>
+    <main
+      className={
+        isEdit
+          ? "page-shell flex flex-col"
+          : "page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]"
+      }
+    >
+      {isEdit ? (
+        <PageHeader title="When did your last period start?" />
+      ) : (
+        <>
+          <StepProgress current={2} total={3} />
+          <div className="mt-8">
+            <PageHeader label="Step 2 of 3" title="When did your last period start?" />
+          </div>
+        </>
+      )}
       <p className="mt-4 text-[17px] leading-relaxed text-foreground">
         We use this to find your due date and your week.
       </p>
@@ -153,9 +184,11 @@ export function LastPeriodPage() {
           <p className="mt-2 text-[17px] text-foreground">{pregnancyAgeSentence(result.age)}</p>
         </PeachCard>
       ) : null}
-      <p className="mt-4 text-[15px] text-foreground">You can change this later in your profile.</p>
+      {isEdit ? null : (
+        <p className="mt-4 text-[15px] text-foreground">You can change this later in your profile.</p>
+      )}
 
-      <div className="mt-auto space-y-4 pt-8">
+      <div className={isEdit ? "space-y-4 pt-8" : "mt-auto space-y-4 pt-8"}>
         <FormError message={saveError} />
         <PrimaryButton
           type="button"
@@ -168,6 +201,8 @@ export function LastPeriodPage() {
               <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden />
               Saving…
             </>
+          ) : isEdit ? (
+            "Save"
           ) : (
             "Continue"
           )}
@@ -175,9 +210,9 @@ export function LastPeriodPage() {
         <OutlineButton
           type="button"
           disabled={saving}
-          onClick={() => void navigate({ to: "/signup/details" })}
+          onClick={() => void navigate({ to: isEdit ? "/home" : "/signup/details" })}
         >
-          Skip for now
+          {isEdit ? "Cancel" : "Skip for now"}
         </OutlineButton>
       </div>
     </main>

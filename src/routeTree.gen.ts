@@ -20,6 +20,7 @@ import { Route as TabsCommunityRouteImport } from './routes/_tabs.community'
 import { Route as TabsDailyRouteImport } from './routes/_tabs.daily'
 import { Route as TabsDebbyRouteImport } from './routes/_tabs.debby'
 import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
+import { Route as TabsPregnancyDateRouteImport } from './routes/_tabs.pregnancy-date'
 import { Route as TabsProfileRouteImport } from './routes/_tabs.profile'
 import { Route as SignupDetailsRouteImport } from './routes/signup_.details'
 import { Route as SignupPeriodRouteImport } from './routes/signup_.period'
@@ -78,6 +79,11 @@ const TabsHomeRoute = TabsHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => TabsRoute,
 } as any)
+const TabsPregnancyDateRoute = TabsPregnancyDateRouteImport.update({
+  id: '/pregnancy-date',
+  path: '/pregnancy-date',
+  getParentRoute: () => TabsRoute,
+} as any)
 const TabsProfileRoute = TabsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/daily': typeof TabsDailyRoute
   '/debby': typeof TabsDebbyRoute
   '/home': typeof TabsHomeRoute
+  '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/daily': typeof TabsDailyRoute
   '/debby': typeof TabsDebbyRoute
   '/home': typeof TabsHomeRoute
+  '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/_tabs/daily': typeof TabsDailyRoute
   '/_tabs/debby': typeof TabsDebbyRoute
   '/_tabs/home': typeof TabsHomeRoute
+  '/_tabs/pregnancy-date': typeof TabsPregnancyDateRoute
   '/_tabs/profile': typeof TabsProfileRoute
   '/signup_/details': typeof SignupDetailsRoute
   '/signup_/period': typeof SignupPeriodRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/daily'
     | '/debby'
     | '/home'
+    | '/pregnancy-date'
     | '/profile'
     | '/signup/details'
     | '/signup/period'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/daily'
     | '/debby'
     | '/home'
+    | '/pregnancy-date'
     | '/profile'
     | '/signup/details'
     | '/signup/period'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/_tabs/daily'
     | '/_tabs/debby'
     | '/_tabs/home'
+    | '/_tabs/pregnancy-date'
     | '/_tabs/profile'
     | '/signup_/details'
     | '/signup_/period'
@@ -281,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsHomeRouteImport
       parentRoute: typeof TabsRoute
     }
+    '/_tabs/pregnancy-date': {
+      id: '/_tabs/pregnancy-date'
+      path: '/pregnancy-date'
+      fullPath: '/pregnancy-date'
+      preLoaderRoute: typeof TabsPregnancyDateRouteImport
+      parentRoute: typeof TabsRoute
+    }
     '/_tabs/profile': {
       id: '/_tabs/profile'
       path: '/profile'
@@ -310,6 +329,7 @@ interface TabsRouteChildren {
   TabsDailyRoute: typeof TabsDailyRoute
   TabsDebbyRoute: typeof TabsDebbyRoute
   TabsHomeRoute: typeof TabsHomeRoute
+  TabsPregnancyDateRoute: typeof TabsPregnancyDateRoute
   TabsProfileRoute: typeof TabsProfileRoute
 }
 
@@ -318,6 +338,7 @@ const TabsRouteChildren: TabsRouteChildren = {
   TabsDailyRoute: TabsDailyRoute,
   TabsDebbyRoute: TabsDebbyRoute,
   TabsHomeRoute: TabsHomeRoute,
+  TabsPregnancyDateRoute: TabsPregnancyDateRoute,
   TabsProfileRoute: TabsProfileRoute,
 }
 
