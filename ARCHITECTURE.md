@@ -8,6 +8,7 @@
 - `src/features/profile` - Public profile (profiles) and private profile (private_profiles).
 - `src/features/pregnancy-calculator` - Due date, current week and trimester calculations.
 - `src/features/daily-checklist` - Daily tasks and per-day completions.
+- `src/features/home` - The Home screen at /home (greeting, pregnancy or baby card, checklist link, Ask Debby, tip of the week).
 - `src/features/ai-chat` - Ask Debby chat. Talks only to the debby-chat edge function.
 - `src/features/notifications` - Push permission, subscriptions, reminder settings.
 - `src/features/settings` - Language, timezone, reminders, legal links, account deletion.
@@ -32,7 +33,7 @@ Every user_id / id that points to auth.users uses ON DELETE CASCADE: deleting an
 - `task_completions` - Only the owner can read, insert and delete. One row per user, task and day.
 - `chat_messages` - Owner can read. Only the service role can insert. Nobody can update or delete from the app.
 - `chat_summaries` - Owner can read. Only the service role can write.
-- `weekly_content` - Signed-in users can read (weeks 1 to 42). No app writes.
+- `weekly_content` - Signed-in users can read (weeks 1 to 42). No app writes. Rows marked "Draft, pending review" must be reviewed by a doctor or midwife before launch.
 - `push_subscriptions` - Only the owner can read, insert and delete. Endpoint is unique.
 - `notify_list` - Owner can insert and read her own rows. One row per user and topic.
 
@@ -86,3 +87,20 @@ Both step 2 and step 3 can be skipped. The app must work fully with no date. Dat
 ## States list
 
 src/config/nigerian-states.ts holds the 36 states and the Federal Capital Territory. It feeds the state dropdown in step 3.
+
+## Home screen
+
+Location: src/features/home. Route: /home.
+
+- Loads her own private_profiles row (full_name, last_period_date, due_date, stage, baby_birth_date) and, when she is pregnant with a date, the weekly_content tip for her week. Shows loading placeholders, and a friendly message with "Try again" if loading fails.
+- Greeting: "Good morning" before 12:00, "Good afternoon" from 12:00, "Good evening" from 17:00, in her phone time, with her first name (first word of full_name). The name is never put in the page title.
+- Pregnant or no stage, with a date: "Your pregnancy" card with weeks and days, trimester, due date and a bar of completed weeks out of 40 (never over 100 percent). Past 42 weeks it adds "Please talk to your clinic about your next steps." With only a due date, the rest is worked out with the calculator.
+- No date: "Add your due date" card with an "Add date" button to /pregnancy-date.
+- New mother or breastfeeding: "Your baby" card with the baby age (weeks under 12 weeks, then months), or a welcome line with no numbers when there is no birth date. No tip card.
+- Every stage: "Today's checklist" card linking to /daily (no numbers yet) and the green Ask Debby card linking to /debby.
+- Tip of the week (pregnant only): week = completed weeks, at least 1 and at most 42. Hidden when there is no row.
+- The rules are plain functions in homeSummary.ts, with unit tests next to them.
+
+## Edit pregnancy date
+
+- /pregnancy-date: signed in users only, with the bottom bar. Reuses the signup step 2 screen (PregnancyDateForm in src/features/pregnancy-calculator) with no step bar or step label. Her saved dates are filled in. Save writes last_period_date and due_date to her private_profiles row, then goes to /home. Cancel goes to /home. Same checks and the same "I don't know the date" mode as signup step 2.
