@@ -10,6 +10,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { ProgressBar } from "@/components/ProgressBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/AuthProvider";
+import { doneText } from "@/features/daily-checklist/checklistText";
+import { useDailyChecklist } from "@/features/daily-checklist/useDailyChecklist";
 import {
   formatCalendarDate,
   todayInLocalTimeZone,
@@ -154,6 +156,7 @@ function StageCard({ card }: { card: HomeCard }) {
 }
 
 function ChecklistCard() {
+  const checklist = useDailyChecklist();
   return (
     <Link
       to="/daily"
@@ -162,7 +165,21 @@ function ChecklistCard() {
       <WhiteCard className="flex items-center gap-4">
         <div className="flex-1">
           <h2 className="text-[20px] leading-tight font-extrabold text-foreground">Today's checklist</h2>
-          <p className="mt-1 text-[17px] text-foreground">See your tasks for today.</p>
+          {checklist.status === "loading" ? (
+            <div className="mt-2 space-y-3" aria-busy="true" aria-label="Loading">
+              <Skeleton className="h-5 w-28 rounded-full" />
+              <Skeleton className="h-2.5 w-full rounded-full" />
+            </div>
+          ) : checklist.status === "error" ? (
+            <p className="mt-1 text-[17px] text-foreground">See your tasks for today.</p>
+          ) : checklist.total === 0 ? (
+            <p className="mt-1 text-[17px] text-foreground">No tasks for today.</p>
+          ) : (
+            <>
+              <p className="mt-1 text-[17px] text-foreground">{doneText(checklist.done, checklist.total)}</p>
+              <ProgressBar value={(checklist.done / checklist.total) * 100} className="mt-3" />
+            </>
+          )}
         </div>
         <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
       </WhiteCard>
