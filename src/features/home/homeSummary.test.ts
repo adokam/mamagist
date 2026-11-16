@@ -76,13 +76,8 @@ describe("baby card", () => {
   const today = d(2026, 11, 12);
 
   it("is used for new mothers and breastfeeding, even with a pregnancy date", () => {
-    expect(
-      homeCard({ ...empty, stage: "new_mother", last_period_date: "2026-05-10" }, today).kind,
-    ).toBe("baby");
-    expect(homeCard({ ...empty, stage: "breastfeeding" }, today)).toEqual({
-      kind: "baby",
-      babyAge: null,
-    });
+    expect(homeCard({ ...empty, stage: "new_mother", last_period_date: "2026-05-10" }, today).kind).toBe("baby");
+    expect(homeCard({ ...empty, stage: "breastfeeding" }, today)).toEqual({ kind: "baby", babyAge: null });
   });
 
   it("shows weeks under 12 weeks, months from 12 weeks", () => {

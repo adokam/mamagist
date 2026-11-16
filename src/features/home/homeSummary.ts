@@ -85,7 +85,6 @@ export function trimesterName(t: Trimester): string {
 /** "3 weeks old", "5 months old", "Less than 1 week old". */
 export function babyAgeText({ unit, value }: BabyAge): string {
   if (unit === "weeks" && value === 0) return "Less than 1 week old";
-  const word =
-    unit === "weeks" ? (value === 1 ? "week" : "weeks") : value === 1 ? "month" : "months";
+  const word = unit === "weeks" ? (value === 1 ? "week" : "weeks") : value === 1 ? "month" : "months";
   return `${value} ${word} old`;
 }
