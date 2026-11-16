@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { selectTasks, type DailyTask } from "./selectTasks";
 
-const task = (id: string, stage: DailyTask["stage"], extra: Partial<DailyTask> = {}): DailyTask => ({
+const task = (
+  id: string,
+  stage: DailyTask["stage"],
+  extra: Partial<DailyTask> = {},
+): DailyTask => ({
   id,
   title: id,
   stage,

@@ -19,7 +19,14 @@ import {
 import { profileSummaryQuery } from "@/features/profile/privateProfile";
 import { supabase } from "@/integrations/supabase/client";
 
-import { babyAgeText, greeting, homeCard, trimesterName, weeksAndDays, type HomeCard } from "./homeSummary";
+import {
+  babyAgeText,
+  greeting,
+  homeCard,
+  trimesterName,
+  weeksAndDays,
+  type HomeCard,
+} from "./homeSummary";
 
 function weeklyTipQuery(week: number | null) {
   return {
@@ -70,7 +77,10 @@ export function HomePage() {
       ) : (
         <div className="space-y-4">
           <div className="mb-6">
-            <PageHeader label="Mamagist" title={greeting(now.getHours(), profile.data?.full_name ?? null)} />
+            <PageHeader
+              label="Mamagist"
+              title={greeting(now.getHours(), profile.data?.full_name ?? null)}
+            />
           </div>
           <StageCard card={card} />
           <ChecklistCard />
@@ -108,11 +118,17 @@ function StageCard({ card }: { card: HomeCard }) {
   if (card.kind === "no_date") {
     return (
       <PeachCard>
-        <h2 className="text-[22px] leading-tight font-extrabold text-foreground">Add your due date</h2>
+        <h2 className="text-[22px] leading-tight font-extrabold text-foreground">
+          Add your due date
+        </h2>
         <p className="mt-2 text-[17px] leading-relaxed text-foreground">
           Add your last period or due date to see your week.
         </p>
-        <PrimaryButton type="button" className="mt-5" onClick={() => void navigate({ to: "/pregnancy-date" })}>
+        <PrimaryButton
+          type="button"
+          className="mt-5"
+          onClick={() => void navigate({ to: "/pregnancy-date" })}
+        >
           Add date
         </PrimaryButton>
       </PeachCard>
@@ -164,7 +180,9 @@ function ChecklistCard() {
     >
       <WhiteCard className="flex items-center gap-4">
         <div className="flex-1">
-          <h2 className="text-[20px] leading-tight font-extrabold text-foreground">Today's checklist</h2>
+          <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
+            Today's checklist
+          </h2>
           {checklist.status === "loading" ? (
             <div className="mt-2 space-y-3" aria-busy="true" aria-label="Loading">
               <Skeleton className="h-5 w-28 rounded-full" />
@@ -176,7 +194,9 @@ function ChecklistCard() {
             <p className="mt-1 text-[17px] text-foreground">No tasks for today.</p>
           ) : (
             <>
-              <p className="mt-1 text-[17px] text-foreground">{doneText(checklist.done, checklist.total)}</p>
+              <p className="mt-1 text-[17px] text-foreground">
+                {doneText(checklist.done, checklist.total)}
+              </p>
               <ProgressBar value={(checklist.done / checklist.total) * 100} className="mt-3" />
             </>
           )}

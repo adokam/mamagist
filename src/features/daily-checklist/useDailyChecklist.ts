@@ -39,7 +39,8 @@ const activeTasksQuery = queryOptions({
   },
 });
 
-const completionsKey = (userId: string, today: string) => ["task-completions", userId, today] as const;
+const completionsKey = (userId: string, today: string) =>
+  ["task-completions", userId, today] as const;
 
 /** Her completions from 90 days before today up to today. */
 const completionsQuery = (userId: string, today: string, enabled: boolean) =>
@@ -112,7 +113,9 @@ export function useDailyChecklist(): DailyChecklist {
             .eq("user_id", userId)
             .eq("task_id", taskId)
             .eq("completed_on", today)
-        : supabase.from("task_completions").insert({ user_id: userId, task_id: taskId, completed_on: today });
+        : supabase
+            .from("task_completions")
+            .insert({ user_id: userId, task_id: taskId, completed_on: today });
 
       void Promise.resolve(request)
         .then(({ error }) => {
@@ -122,10 +125,15 @@ export function useDailyChecklist(): DailyChecklist {
         .catch(() => {
           queryClient.setQueryData<Completion[]>(key, (current = []) =>
             wasDone
-              ? [...current.filter((c) => !(c.task_id === taskId && c.completed_on === today)), { task_id: taskId, completed_on: today }]
+              ? [
+                  ...current.filter((c) => !(c.task_id === taskId && c.completed_on === today)),
+                  { task_id: taskId, completed_on: today },
+                ]
               : current.filter((c) => !(c.task_id === taskId && c.completed_on === today)),
           );
-          setSaveError(typeof navigator !== "undefined" && navigator.onLine === false ? OFFLINE : SAVE_FAILED);
+          setSaveError(
+            typeof navigator !== "undefined" && navigator.onLine === false ? OFFLINE : SAVE_FAILED,
+          );
         })
         .finally(() => pending.current.delete(taskId));
     },
@@ -140,10 +148,14 @@ export function useDailyChecklist(): DailyChecklist {
     const pregnant = stage === null || stage === "pregnant";
     const savedPeriod = parseIsoDate(last_period_date ?? "");
     const savedDue = parseIsoDate(due_date ?? "");
-    const lastPeriod = pregnant ? (savedPeriod ?? (savedDue ? lastPeriodFromDueDate(savedDue) : null)) : null;
+    const lastPeriod = pregnant
+      ? (savedPeriod ?? (savedDue ? lastPeriodFromDueDate(savedDue) : null))
+      : null;
 
     const todayTasks = tasksForDay(tasks.data, stage, lastPeriod, todayDate);
-    const doneIds = new Set(completions.data.filter((c) => c.completed_on === today).map((c) => c.task_id));
+    const doneIds = new Set(
+      completions.data.filter((c) => c.completed_on === today).map((c) => c.task_id),
+    );
     return {
       tasks: todayTasks,
       doneIds,

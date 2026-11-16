@@ -1,6 +1,10 @@
 // Streak of complete days. Pure function, no screen code.
 import { pregnancyAge } from "@/features/pregnancy-calculator/calculator";
-import { addDays, toIsoDate, type CalendarDate } from "@/features/pregnancy-calculator/calendarDate";
+import {
+  addDays,
+  toIsoDate,
+  type CalendarDate,
+} from "@/features/pregnancy-calculator/calendarDate";
 
 import { selectTasks, type DailyTask, type LifeStage } from "./selectTasks";
 
@@ -20,7 +24,10 @@ export function tasksForDay(
 }
 
 /** A day is complete when it had at least one task and every one has a completion row that day. */
-export function isDayComplete(dayTasks: readonly DailyTask[], doneIds: ReadonlySet<string>): boolean {
+export function isDayComplete(
+  dayTasks: readonly DailyTask[],
+  doneIds: ReadonlySet<string>,
+): boolean {
   return dayTasks.length > 0 && dayTasks.every((t) => doneIds.has(t.id));
 }
 

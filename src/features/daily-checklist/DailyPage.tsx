@@ -38,7 +38,9 @@ export function DailyPage() {
               <p className="text-[22px] leading-tight font-extrabold text-foreground">
                 {doneText(checklist.done, checklist.total)}
               </p>
-              <p className="text-[15px] font-bold text-foreground">{streakText(checklist.streak)}</p>
+              <p className="text-[15px] font-bold text-foreground">
+                {streakText(checklist.streak)}
+              </p>
             </div>
             <ProgressBar value={(checklist.done / checklist.total) * 100} className="mt-5" />
           </PeachCard>
@@ -83,7 +85,15 @@ export function DailyPage() {
 }
 
 /** The whole card is the touch area. */
-function TaskCard({ task, done, onToggle }: { task: DailyTask; done: boolean; onToggle: () => void }) {
+function TaskCard({
+  task,
+  done,
+  onToggle,
+}: {
+  task: DailyTask;
+  done: boolean;
+  onToggle: () => void;
+}) {
   return (
     <button
       type="button"
@@ -96,7 +106,9 @@ function TaskCard({ task, done, onToggle }: { task: DailyTask; done: boolean; on
         aria-hidden
         className={cn(
           "grid h-[26px] w-[26px] shrink-0 place-items-center rounded-[3px]",
-          done ? "bg-primary text-primary-foreground" : "border-[1.5px] border-muted-foreground bg-surface",
+          done
+            ? "bg-primary text-primary-foreground"
+            : "border-[1.5px] border-muted-foreground bg-surface",
         )}
       >
         {done ? <Check className="h-5 w-5" strokeWidth={3.5} /> : null}

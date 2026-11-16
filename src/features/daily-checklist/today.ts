@@ -2,7 +2,10 @@
 export const DEFAULT_TIME_ZONE = "Africa/Lagos";
 
 /** Today's date as YYYY-MM-DD in the given time zone. Empty or unknown zones use Africa/Lagos. */
-export function todayInTimeZone(timeZone: string | null | undefined, now: Date = new Date()): string {
+export function todayInTimeZone(
+  timeZone: string | null | undefined,
+  now: Date = new Date(),
+): string {
   const zone = timeZone?.trim() || DEFAULT_TIME_ZONE;
   try {
     return format(zone, now);

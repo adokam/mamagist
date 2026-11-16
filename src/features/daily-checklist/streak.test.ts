@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { addDays, toIsoDate, type CalendarDate } from "@/features/pregnancy-calculator/calendarDate";
+import {
+  addDays,
+  toIsoDate,
+  type CalendarDate,
+} from "@/features/pregnancy-calculator/calendarDate";
 
 import type { DailyTask } from "./selectTasks";
 import { computeStreak, type Completion } from "./streak";
@@ -21,7 +25,9 @@ const tasks = [task("walk"), task("water"), task("kicks", { trimester: 3 })];
 const today: CalendarDate = { year: 2026, month: 11, day: 16 };
 // No date: only walk and water apply.
 const doneOn = (daysAgo: number[], ids = ["walk", "water"]): Completion[] =>
-  daysAgo.flatMap((n) => ids.map((id) => ({ task_id: id, completed_on: toIsoDate(addDays(today, -n)) })));
+  daysAgo.flatMap((n) =>
+    ids.map((id) => ({ task_id: id, completed_on: toIsoDate(addDays(today, -n)) })),
+  );
 const streak = (completions: Completion[], lastPeriod: CalendarDate | null = null, on = today) =>
   computeStreak({ tasks, stage: "pregnant", lastPeriod, completions, today: on });
 
@@ -73,8 +79,12 @@ describe("todayInTimeZone", () => {
     // 22:59 UTC is still 15 Nov in Lagos (23:59).
     expect(todayInTimeZone("Africa/Lagos", new Date("2026-11-15T22:59:00Z"))).toBe("2026-11-15");
     // 05:00 UTC on 16 Nov is 00:00 on 16 Nov in New York.
-    expect(todayInTimeZone("America/New_York", new Date("2026-11-16T04:59:00Z"))).toBe("2026-11-15");
-    expect(todayInTimeZone("America/New_York", new Date("2026-11-16T05:00:00Z"))).toBe("2026-11-16");
+    expect(todayInTimeZone("America/New_York", new Date("2026-11-16T04:59:00Z"))).toBe(
+      "2026-11-15",
+    );
+    expect(todayInTimeZone("America/New_York", new Date("2026-11-16T05:00:00Z"))).toBe(
+      "2026-11-16",
+    );
   });
 
   it("uses Africa/Lagos when the time zone is empty or unknown", () => {
