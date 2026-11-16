@@ -104,3 +104,16 @@ Location: src/features/home. Route: /home.
 ## Edit pregnancy date
 
 - /pregnancy-date: signed in users only, with the bottom bar. Reuses the signup step 2 screen (PregnancyDateForm in src/features/pregnancy-calculator) with no step bar or step label. Her saved dates are filled in. Save writes last_period_date and due_date to her private_profiles row, then goes to /home. Cancel goes to /home. Same checks and the same "I don't know the date" mode as signup step 2.
+
+## Daily checklist
+
+Location: src/features/daily-checklist. Route: /daily, with the bottom bar (Daily active).
+
+- Reads the active daily_tasks rows, her own private_profiles row (stage, dates, timezone) and her own task_completions from the last 90 days. Ticking a task inserts her row (user_id, task_id, completed_on); unticking deletes her matching row. The screen updates at once; if saving fails the box goes back and a short friendly message shows. "Already exists" counts as done.
+- Today: the calendar date (YYYY-MM-DD) in private_profiles.timezone, or Africa/Lagos if empty, using the Intl API. It is worked out again when the app becomes visible or gets focus, and every 30 seconds, so the list resets at midnight without a reload.
+- Task rule (selectTasks): a task applies when its stage matches hers (empty stage counts as pregnant); its trimester is empty or equals hers (a task with a trimester never applies when hers is unknown); min_week is empty or at most her weeks; max_week is empty or at least her weeks. New mother and breastfeeding ignore weeks and trimester. Sorted by sort_order. Her weeks and trimester come from pregnancyAge, using her last period date or the one worked out from her due date; with no date they are unknown.
+- Streak rule (computeStreak): a day is complete when every task that applied that day (selectTasks with her weeks and trimester on that day) has a completion that day. A day with no tasks is not complete. The streak counts complete days in a row, ending today if today is complete, otherwise ending yesterday. At most 90.
+- The Home checklist card uses the same data code (useDailyChecklist) to show "4 of 6 done" and a progress bar.
+- Completions and health details are never logged to the console or to analytics.
+- Tasks are edited in the Supabase dashboard (daily_tasks). They must be reviewed by a doctor or midwife before launch.
+- The rules are plain functions in selectTasks.ts, streak.ts and today.ts, with unit tests next to them.
