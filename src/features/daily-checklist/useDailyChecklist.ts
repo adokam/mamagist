@@ -102,6 +102,7 @@ export function useDailyChecklist(): DailyChecklist {
 
       pending.current.add(taskId);
       setSaveError(null);
+      void queryClient.cancelQueries({ queryKey: key });
       queryClient.setQueryData(key, after);
 
       const request = wasDone
