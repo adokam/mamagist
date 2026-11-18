@@ -117,3 +117,20 @@ Location: src/features/daily-checklist. Route: /daily, with the bottom bar (Dail
 - Completions and health details are never logged to the console or to analytics.
 - Tasks are edited in the Supabase dashboard (daily_tasks). They must be reviewed by a doctor or midwife before launch.
 - The rules are plain functions in selectTasks.ts, streak.ts and today.ts, with unit tests next to them.
+
+## Ask Debby chat
+
+Location: src/features/ai-chat. Route: /debby, signed in users only, with the bottom bar (Debby active).
+
+- The edge function lives in supabase/functions/debby-chat/index.ts and is created and deployed from the Supabase dashboard, not from this app. The front end only calls `supabase.functions.invoke("debby-chat", { body: { message } })` with the existing Supabase client (debbyApi.ts). No key is ever in the front end.
+- debby-chat response fields (JSON):
+  - `code`: one of ok, safety, limit, busy, error, too_long
+  - `reply`: the text shown as Debby's message
+  - `safety_triggered`: true or false
+  - `remaining`: messages left today (only on ok and limit)
+- Code handling is the pure function debbyReplyState (debbyResponse.ts): ok shows the reply; safety shows it in a peach bubble with a 2px deep green border; limit shows it and turns the input off ("Debby will be back tomorrow") until her day changes in her time zone (same today code as the daily checklist); busy and error show it with "Try again", which resends the same message without a second bubble of hers; too_long shows it with no retry. A failed call (no internet, auth error, or no valid answer) shows "We could not reach Debby. Check your internet and try again." with "Try again".
+- Header line: "Your pregnancy guide · 26 weeks, 4 days" from pregnancyAge, "Your pregnancy guide" with no date, "Your guide for new mothers" for new_mother and breastfeeding (debbyText.ts).
+- History: her last 50 chat_messages rows (id, role, content, safety_triggered, created_at), oldest at the top. When 50 came back, "Load earlier messages" loads 50 more. With no history, a first Debby message is shown and not saved.
+- Quick reply chips are in chips.ts (pregnant or empty stage vs new mother and breastfeeding).
+- Messages are text only (never HTML or markdown), kept in memory only (never in local storage), and never logged to the console or analytics. Max 1000 characters; a counter shows after 900.
+- Layout: header at the top, only the messages scroll, the note and input sit above the bottom bar, sized with dynamic viewport units. When the phone keyboard opens, the screen follows the visible area so the input stays in view.
