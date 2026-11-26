@@ -36,6 +36,13 @@ Every user_id / id that points to auth.users uses ON DELETE CASCADE: deleting an
 - `weekly_content` - Signed-in users can read (weeks 1 to 42). No app writes. Rows marked "Draft, pending review" must be reviewed by a doctor or midwife before launch.
 - `push_subscriptions` - Only the owner can read, insert and delete. Endpoint is unique.
 - `notify_list` - Owner can insert and read her own rows. One row per user and topic.
+- `community_groups` - Any signed-in user can read all groups and create one; only the creator can update or delete her group.
+- `community_group_members` - Any signed-in user can read members; a mother can join (insert her own row) and leave (delete her own row); a group admin can delete any member row of her group. One row per user and group.
+- `community_posts` - Any signed-in user can read all posts; a mother can insert her own posts and update or delete only her own. `group_id` NULL is the big feed. A post must have words, a photo, or both.
+- `community_post_likes` - Any signed-in user can read likes; a mother can insert or delete only her own like. One row per user and post.
+- `community_comments` - Any signed-in user can read comments; a mother can insert her own comments and delete only her own.
+- `community_reports` - A mother can insert her own report; nobody in the app can read reports — only the service role can. For moderation later.
+- Storage bucket `community-images` (public to read): a signed-in mother can upload a post photo only into a folder named with her own user id, images only, like the `avatars` bucket.
 
 Signup trigger `on_auth_user_created` (function `handle_new_user`, security definer, fixed search_path) creates a profiles, private_profiles and user_roles (role user) row for every new user.
 Migration `20261113100220` replaces `handle_new_user` so it also saves the signup metadata: `full_name` goes into private_profiles.full_name, and when `terms_accepted` is true, terms_accepted_at and privacy_accepted_at are set to now() on the server. The trigger, tables and policies are unchanged.
@@ -152,6 +159,7 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 ## Community
 - `/community` (CommunityPage, from docs/design/community.jpg): title, an accent card "Community is coming soon" with the Notify me button inside, and "We will tell you the day it opens." underneath.
 - Notify me inserts one row into notify_list (user_id, topic "community"). The table has a unique (user_id, topic) rule and RLS that only lets her insert her own rows, so a second tap cannot make a duplicate — it is treated as already on the list. After it works the button reads "You are on the list" and stays that way on later visits (her row is read on load).
+- Foundation (migration `20261126090000`): tables `community_groups`, `community_group_members`, `community_posts`, `community_post_likes`, `community_comments`, `community_reports`, and the public `community-images` storage bucket. The migration file only is in the repo — it still has to be applied to the live Supabase project (`supabase db push` or the dashboard) before the feed can load or save anything. The feed, groups and menu are built on top of these tables in the next parts.
 
 ## Login and signup look
 - /login and /signup (step 1, and the "Check your email" screen) use a soft gradient made from the background and card tokens, a small Mamagist logo mark (a primary rounded square with a white heart, `src/features/auth/AuthIntro.tsx`) above the title, and the line "Your pregnancy guide, week by week." under the title. No photos, no external images, no new fonts. The signup steps and validation are unchanged.
