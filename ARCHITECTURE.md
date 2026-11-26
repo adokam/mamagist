@@ -51,16 +51,11 @@ Storage bucket `avatars`: 1 MB limit, image extensions only, users can only writ
 6. `src/integrations/supabase/types.ts` can be regenerated with `supabase gen types typescript --project-id <ref>`.
 
 ## Design tokens
-Defined in `src/styles.css` as CSS variables (light in `:root`, dark in `.dark`) and mapped to Tailwind tokens. Use the Tailwind classes (`bg-background`, `bg-card`, `text-foreground`, `bg-primary`, `bg-coral`, ...), never raw hex values.
-- `background`: light cream #FFF8F0, dark #101A15
-- `card`: light peach #FDE3D6, dark #243A2F
-- `foreground` (text): light deep green #1F4D3A, dark cream #FFF8F0
-- `primary` (buttons): light deep green #1F4D3A, dark peach #F8B79F
-- `coral` #F28B6D: progress bars and small accents only, never text
-- `surface` (white): light #FFFFFF, used for cards, text inputs and the bottom bar
-- `coral-track` (light peach progress track): light #F6CDB9, the empty part of progress bars
-- `shell`: plain background behind the 430px app column on big screens
+Defined in `src/config/theme.ts` as palettes and applied as CSS variables on `<html>` by `applyPalette()` (called from `src/features/settings/darkMode.ts` whenever light/dark mode changes); `src/styles.css` only maps those variables to Tailwind tokens. Use the Tailwind classes (`bg-background`, `bg-card`, `text-ink`, `bg-primary`, ...), never raw hex values in a screen. Tokens are named by job: background, surface, card, ink, muted, line, primary, primary-contrast, accent, alert, alert-border, primary-dark. There is no cream, peach or coral anywhere in the app.
 - Font: Nunito (Google Fonts), falling back to system fonts. Corner radius token `--radius` is 1.25rem.
+
+## Switching the theme
+The app has three palettes in `src/config/theme.ts` — `green` (active), `plum`, and `red` — each with a light and a dark version using the same token names. To switch the whole app to another color, change one word: the `ACTIVE_THEME` constant in `src/config/theme.ts`, e.g. `export const ACTIVE_THEME: ThemeName = "plum";`. No other file needs to change. The light and dark values of every palette pass WCAG contrast 4.5 to 1 for ink on background/card/surface, muted on background, primary-contrast on primary, and ink on accent/alert (checked with a contrast script; see the Fresh Green report).
 ## Pregnancy calculator
 
 Location: src/features/pregnancy-calculator
@@ -155,8 +150,8 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 - /reset-password reads the recovery session from the reset link, asks for a new password of at least 8 characters, saves it with Supabase, signs her out of the recovery session and sends her to /login. An expired or used link shows a friendly message with a link to ask for a new one. The redirect address `<site>/reset-password` must be allowlisted in Supabase Auth > URL Configuration > Redirect URLs.
 
 ## Community
-- `/community` (CommunityPage, from docs/design/community.jpg): title, a peach card "Community is coming soon" with the Notify me button inside, and "We will tell you the day it opens." underneath.
+- `/community` (CommunityPage, from docs/design/community.jpg): title, an accent card "Community is coming soon" with the Notify me button inside, and "We will tell you the day it opens." underneath.
 - Notify me inserts one row into notify_list (user_id, topic "community"). The table has a unique (user_id, topic) rule and RLS that only lets her insert her own rows, so a second tap cannot make a duplicate — it is treated as already on the list. After it works the button reads "You are on the list" and stays that way on later visits (her row is read on load).
 
 ## Login and signup look
-- /login and /signup (step 1, and the "Check your email" screen) use a soft cream-to-peach gradient made from the existing background and card tokens, a small Mamagist logo mark (deep green rounded square with a cream heart, `src/features/auth/AuthIntro.tsx`) above the title, and the line "Your pregnancy guide, week by week." under the title. No photos, no external images, no new fonts. The signup steps and validation are unchanged.
+- /login and /signup (step 1, and the "Check your email" screen) use a soft gradient made from the background and card tokens, a small Mamagist logo mark (a primary rounded square with a white heart, `src/features/auth/AuthIntro.tsx`) above the title, and the line "Your pregnancy guide, week by week." under the title. No photos, no external images, no new fonts. The signup steps and validation are unchanged.

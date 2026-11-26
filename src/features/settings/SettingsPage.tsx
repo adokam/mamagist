@@ -102,7 +102,7 @@ export function SettingsPage() {
                 onClick={() => setChoice(dark ? "light" : "dark")}
                 className={cn(
                   "flex h-8 w-14 shrink-0 items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-                  dark ? "justify-end bg-primary" : "justify-start bg-coral-track",
+                  dark ? "justify-end bg-primary" : "justify-start bg-line",
                 )}
               >
                 <span className="h-6 w-6 rounded-full bg-surface" />
@@ -125,7 +125,7 @@ export function SettingsPage() {
                 }}
                 className={cn(
                   "flex h-8 w-14 shrink-0 items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50",
-                  enabled ? "justify-end bg-primary" : "justify-start bg-coral-track",
+                  enabled ? "justify-end bg-primary" : "justify-start bg-line",
                 )}
               >
                 <span className="h-6 w-6 rounded-full bg-surface" />

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { applyPalette, initPalette } from "@/config/theme";
+
 /** Her saved dark mode choice. "system" means follow the phone setting. */
 export type ThemeChoice = "light" | "dark" | "system";
 
@@ -30,6 +32,7 @@ function prefersDark(): boolean {
 export function applyTheme(): void {
   const theme = resolveTheme(getSavedChoice(), prefersDark());
   document.documentElement.classList.toggle("dark", theme === "dark");
+  applyPalette();
 }
 
 /**
@@ -38,12 +41,16 @@ export function applyTheme(): void {
  */
 export function initTheme(): () => void {
   applyTheme();
+  const stopPalette = initPalette();
   const media = window.matchMedia("(prefers-color-scheme: dark)");
   const onChange = () => {
     if (getSavedChoice() === "system") applyTheme();
   };
   media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
+  return () => {
+    stopPalette();
+    media.removeEventListener("change", onChange);
+  };
 }
 
 /** Her dark mode choice, saved on the device. */
@@ -63,6 +70,7 @@ export function useDarkMode() {
     const resolved = resolveTheme(next, prefersDark());
     setDark(resolved === "dark");
     document.documentElement.classList.toggle("dark", resolved === "dark");
+    applyPalette();
   }, []);
 
   useEffect(() => {
@@ -71,6 +79,7 @@ export function useDarkMode() {
       if (getSavedChoice() === "system") {
         setDark(media.matches);
         document.documentElement.classList.toggle("dark", media.matches);
+        applyPalette();
       }
     };
     media.addEventListener("change", onChange);

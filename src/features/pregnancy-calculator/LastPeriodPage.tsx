@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { OutlineButton, PrimaryButton } from "@/components/Buttons";
-import { PeachCard } from "@/components/Cards";
+import { SurfaceCard } from "@/components/Cards";
 import { DateInput } from "@/components/DateInput";
 import { PageHeader } from "@/components/PageHeader";
 import { StepProgress } from "@/components/StepProgress";
@@ -174,7 +174,7 @@ export function PregnancyDateForm({
       </div>
 
       {result.status === "valid" ? (
-        <PeachCard className="mt-4" aria-live="polite">
+        <SurfaceCard className="mt-4" aria-live="polite">
           <p className="text-[15px] text-foreground">
             {mode === "period" ? "Your due date" : "Estimated first day of your last period"}
           </p>
@@ -182,7 +182,7 @@ export function PregnancyDateForm({
             {formatCalendarDate(mode === "period" ? result.dueDate : result.lastPeriod)}
           </p>
           <p className="mt-2 text-base text-foreground">{pregnancyAgeSentence(result.age)}</p>
-        </PeachCard>
+        </SurfaceCard>
       ) : null}
       {isEdit ? null : (
         <p className="mt-4 text-[15px] text-foreground">You can change this later in your profile.</p>

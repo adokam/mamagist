@@ -17,7 +17,7 @@ export type DebbyReplyState = {
   /** The code, or "unreachable" when the call itself failed. */
   kind: DebbyCode | "unreachable";
   text: string;
-  /** "safety" shows a peach bubble with a deep green border. */
+  /** "safety" shows an alert bubble with a 2px alert border. */
   tone: "normal" | "safety";
   /** Show a "Try again" button that sends the same message again. */
   showRetry: boolean;

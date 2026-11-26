@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { PeachCard, WhiteCard } from "@/components/Cards";
+import { SurfaceCard, WhiteCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -59,7 +59,7 @@ export function DailyPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          <PeachCard>
+          <SurfaceCard>
             <div className="flex items-baseline justify-between gap-3">
               <p className="text-[20px] leading-tight font-extrabold text-foreground">
                 {doneText(checklist.done, checklist.total)}
@@ -69,7 +69,7 @@ export function DailyPage() {
               </p>
             </div>
             <ProgressBar value={(checklist.done / checklist.total) * 100} className="mt-3" />
-          </PeachCard>
+          </SurfaceCard>
 
           <FormError message={checklist.saveError} />
 

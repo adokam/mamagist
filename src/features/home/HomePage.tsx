@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
-import { PeachCard, WhiteCard } from "@/components/Cards";
+import { SurfaceCard, WhiteCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -131,7 +131,7 @@ function StageCard({ card }: { card: HomeCard }) {
 
   if (card.kind === "no_date") {
     return (
-      <PeachCard>
+      <SurfaceCard>
         <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
           Add your due date
         </h2>
@@ -145,13 +145,13 @@ function StageCard({ card }: { card: HomeCard }) {
         >
           Add date
         </PrimaryButton>
-      </PeachCard>
+      </SurfaceCard>
     );
   }
 
   if (card.kind === "baby") {
     return (
-      <PeachCard>
+      <SurfaceCard>
         <p className="text-[15px] font-semibold text-foreground">Your baby</p>
         {card.babyAge ? (
           <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight text-foreground">
@@ -162,12 +162,12 @@ function StageCard({ card }: { card: HomeCard }) {
             Welcome. We are here for you and your baby.
           </p>
         )}
-      </PeachCard>
+      </SurfaceCard>
     );
   }
 
   return (
-    <PeachCard>
+    <SurfaceCard>
       <p className="text-[15px] font-semibold text-foreground">Your pregnancy</p>
       <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight text-foreground">
         {weeksAndDays(card.age)}
@@ -181,7 +181,7 @@ function StageCard({ card }: { card: HomeCard }) {
           Please talk to your clinic about your next steps.
         </p>
       ) : null}
-    </PeachCard>
+    </SurfaceCard>
   );
 }
 

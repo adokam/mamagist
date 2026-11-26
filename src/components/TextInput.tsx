@@ -2,7 +2,7 @@ import type { InputHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-/** White, fully rounded text input with a thin peach border, 48px tall, 20px side padding. */
+/** Fully rounded text input with a thin line border, 48px tall, 20px side padding. */
 export function TextInput({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input

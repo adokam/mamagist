@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Big tappable choice, used inside a role="radiogroup". Selected: peach with a deep green border. */
+/** Big tappable choice, used inside a role="radiogroup". Selected: surface with a primary border. */
 export function ChoiceButton({
   selected,
   className,

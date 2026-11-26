@@ -63,7 +63,7 @@ export function DebbyPage() {
       <header className="flex shrink-0 items-center gap-3 border-b border-border px-5 pt-4 pb-3">
         <span
           aria-hidden
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-coral text-[20px] font-extrabold text-foreground"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-[20px] font-extrabold text-primary-contrast"
         >
           D
         </span>

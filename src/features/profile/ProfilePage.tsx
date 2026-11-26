@@ -4,7 +4,7 @@ import { ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { OutlineButton, PrimaryButton } from "@/components/Buttons";
-import { PeachCard, WhiteCard } from "@/components/Cards";
+import { SurfaceCard, WhiteCard } from "@/components/Cards";
 import { ChoiceButton } from "@/components/ChoiceButton";
 import { DateInput } from "@/components/DateInput";
 import { LoadError } from "@/components/LoadError";
@@ -132,7 +132,7 @@ export function ProfilePage() {
         />
       ) : (
         <div className="mt-4 space-y-3">
-          <PeachCard>
+          <SurfaceCard>
             <p className="text-[20px] leading-tight font-extrabold text-foreground">
               {data.full_name?.trim() ? data.full_name : "Hello"}
             </p>
@@ -161,7 +161,7 @@ export function ProfilePage() {
             >
               Edit date
             </OutlineButton>
-          </PeachCard>
+          </SurfaceCard>
 
           <WhiteCard>
             <DetailRow label="Stage" value={data.stage ? STAGE_LABELS[data.stage] : null} />

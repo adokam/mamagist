@@ -4,30 +4,18 @@
  *   npm package before @importing its CSS. Never @import a remote URL (web fonts, CDN CSS): the
  *   build resolves @import from the filesystem. Load those with a <link> in the head() of
  *   src/routes/__root.tsx and name the family in a --font-* token in @theme inline below.
+ *
+ * Colors: the source of truth is src/config/theme.ts (palettes + ACTIVE_THEME).
+ * The palette is applied as CSS variables on <html> by applyPalette(); the
+ * :root / .dark values below are the green palette, kept only as a fallback
+ * for the first paint before JavaScript runs. This file only MAPS those
+ * variables to Tailwind utilities — it does not invent colors.
  */
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-
-/*
- * Design system definition.
- *
- * The design lives in this file: oklch color tokens on the shadcn variables
- * (--background, --foreground, --primary, --secondary, --muted, --accent, ...) plus
- * new tokens as needed, font tokens, and custom styles and animations.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
- */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -37,125 +25,76 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  /* Fresh Green semantic tokens (from src/config/theme.ts). */
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
-  --color-coral: var(--coral);
-  --color-coral-track: var(--coral-track);
   --color-surface: var(--surface);
-  --color-shell: var(--shell);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-contrast: var(--primary-contrast);
+  --color-accent: var(--accent);
+  --color-alert: var(--alert);
+  --color-alert-border: var(--alert-border);
+  --color-primary-dark: var(--primary-dark);
+  /* Legacy shadcn names, all mapped onto the semantic tokens above. */
+  --color-foreground: var(--ink);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--ink);
+  --color-secondary: var(--surface);
+  --color-secondary-foreground: var(--ink);
+  --color-muted-foreground: var(--muted);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: oklch(0.55 0.22 25);
+  --color-destructive-foreground: var(--primary-contrast);
+  --color-border: var(--line);
+  --color-input: var(--line);
+  --color-ring: var(--primary);
+  --color-ring-offset-background: var(--background);
+  --color-sidebar: var(--surface);
+  --color-sidebar-foreground: var(--ink);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--primary-contrast);
+  --color-sidebar-accent: var(--surface);
+  --color-sidebar-accent-foreground: var(--ink);
+  --color-sidebar-border: var(--line);
+  --color-sidebar-ring: var(--primary);
   --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Green palette, light. Fallback only — see the header note. */
 :root {
-  /* Mamagist brand tokens (light). Hex in comments for reference only; use the tokens. */
   --radius: 1.25rem;
-  --background: oklch(0.982 0.013 71.3); /* cream #FFF8F0 */
-  --foreground: oklch(0.382 0.061 163.9); /* deep green #1F4D3A */
-  --card: oklch(0.934 0.034 48.3); /* peach #FDE3D6 */
-  --card-foreground: oklch(0.382 0.061 163.9);
-  --popover: oklch(0.982 0.013 71.3);
-  --popover-foreground: oklch(0.382 0.061 163.9);
-  --primary: oklch(0.382 0.061 163.9); /* deep green buttons */
-  --primary-foreground: oklch(1 0 0); /* white button text */
-  --secondary: oklch(0.934 0.034 48.3);
-  --secondary-foreground: oklch(0.382 0.061 163.9);
-  --muted: oklch(0.944 0.016 73.7);
-  --muted-foreground: oklch(0.519 0.029 163.6);
-  --accent: oklch(0.934 0.034 48.3);
-  --accent-foreground: oklch(0.382 0.061 163.9);
-  --coral: oklch(0.741 0.133 37.1); /* #F28B6D: progress bars and small accents only, never text */
-  --coral-track: oklch(0.878 0.054 47.5); /* light peach progress track #F6CDB9 */
-  --surface: oklch(1 0 0); /* white cards, inputs and the bottom bar */
-  --shell: oklch(0.944 0.016 73.7); /* plain page behind the app column on big screens */
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.982 0.013 71.3);
-  --border: oklch(0.882 0.025 55); /* thin peach line #E8D6CA */
-  --input: oklch(0.882 0.025 55);
-  --ring: oklch(0.382 0.061 163.9 / 40%);
-  --chart-1: oklch(0.741 0.133 37.1);
-  --chart-2: oklch(0.382 0.061 163.9);
-  --chart-3: oklch(0.834 0.083 41.1);
-  --chart-4: oklch(0.519 0.029 163.6);
-  --chart-5: oklch(0.934 0.034 48.3);
-  --sidebar: oklch(0.982 0.013 71.3);
-  --sidebar-foreground: oklch(0.382 0.061 163.9);
-  --sidebar-primary: oklch(0.382 0.061 163.9);
-  --sidebar-primary-foreground: oklch(0.982 0.013 71.3);
-  --sidebar-accent: oklch(0.934 0.034 48.3);
-  --sidebar-accent-foreground: oklch(0.382 0.061 163.9);
-  --sidebar-border: oklch(0.382 0.061 163.9 / 12%);
-  --sidebar-ring: oklch(0.382 0.061 163.9 / 40%);
+  --background: #ffffff;
+  --surface: #f1f6f3;
+  --card: #ffffff;
+  --ink: #12261c;
+  --muted: #5b6b63;
+  --line: #dce5e0;
+  --primary: #1e7a4f;
+  --primary-contrast: #ffffff;
+  --accent: #ffd3c0;
+  --alert: #fff1e8;
+  --alert-border: #12261c;
+  --primary-dark: #14603c;
 }
 
-/* Dark mode: applied when a parent has the .dark class. The toggle comes later in Settings. */
+/* Green palette, dark. Fallback only — see the header note. */
 .dark {
-  --background: oklch(0.206 0.018 162.6); /* #101A15 */
-  --foreground: oklch(0.982 0.013 71.3); /* cream text */
-  --card: oklch(0.326 0.034 162); /* #243A2F */
-  --card-foreground: oklch(0.982 0.013 71.3);
-  --popover: oklch(0.326 0.034 162);
-  --popover-foreground: oklch(0.982 0.013 71.3);
-  --primary: oklch(0.834 0.083 41.1); /* button peach #F8B79F */
-  --primary-foreground: oklch(0.206 0.018 162.6);
-  --secondary: oklch(0.326 0.034 162);
-  --secondary-foreground: oklch(0.982 0.013 71.3);
-  --muted: oklch(0.326 0.034 162);
-  --muted-foreground: oklch(0.982 0.013 71.3 / 70%);
-  --accent: oklch(0.326 0.034 162);
-  --accent-foreground: oklch(0.982 0.013 71.3);
-  --coral: oklch(0.741 0.133 37.1);
-  --coral-track: oklch(0.326 0.034 162);
-  --surface: oklch(0.254 0.022 166.2);
-  --shell: oklch(0.165 0.011 163.2);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.982 0.013 71.3);
-  --border: oklch(0.982 0.013 71.3 / 12%);
-  --input: oklch(0.982 0.013 71.3 / 18%);
-  --ring: oklch(0.834 0.083 41.1 / 50%);
-  --chart-1: oklch(0.741 0.133 37.1);
-  --chart-2: oklch(0.834 0.083 41.1);
-  --chart-3: oklch(0.982 0.013 71.3);
-  --chart-4: oklch(0.519 0.029 163.6);
-  --chart-5: oklch(0.326 0.034 162);
-  --sidebar: oklch(0.206 0.018 162.6);
-  --sidebar-foreground: oklch(0.982 0.013 71.3);
-  --sidebar-primary: oklch(0.834 0.083 41.1);
-  --sidebar-primary-foreground: oklch(0.206 0.018 162.6);
-  --sidebar-accent: oklch(0.326 0.034 162);
-  --sidebar-accent-foreground: oklch(0.982 0.013 71.3);
-  --sidebar-border: oklch(0.982 0.013 71.3 / 12%);
-  --sidebar-ring: oklch(0.834 0.083 41.1 / 50%);
+  --background: #0d1f16;
+  --surface: #142a1f;
+  --card: #1a3327;
+  --ink: #edf5f0;
+  --muted: #a7bcaf;
+  --line: #2c463a;
+  --primary: #4cc38a;
+  --primary-contrast: #0d1f16;
+  --accent: #7a4a3a;
+  --alert: #3a231b;
+  --alert-border: #f0c4ac;
+  --primary-dark: #2e9e6b;
 }
 
 @layer base {
@@ -164,7 +103,7 @@
   }
 
   body {
-    background-color: var(--color-shell);
+    background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-size: 1rem;
