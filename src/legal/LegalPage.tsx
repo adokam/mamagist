@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 
 const backClass =
-  "-ml-2 inline-flex min-h-11 items-center gap-1 rounded-full pr-3 text-[17px] font-bold text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
+  "-ml-2 inline-flex min-h-11 items-center gap-1 rounded-full pr-3 text-base font-bold text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
 
 /** Simple legal text page with a back link. Open to everyone, no bottom bar. */
 export function LegalPage({ title }: { title: string }) {
@@ -26,7 +26,7 @@ export function LegalPage({ title }: { title: string }) {
       <div className="mt-4">
         <PageHeader title={title} />
       </div>
-      <p className="mt-3 text-[17px] leading-relaxed text-foreground">
+      <p className="mt-3 text-base leading-relaxed text-foreground">
         Draft. The final text will be added before launch.
       </p>
     </main>

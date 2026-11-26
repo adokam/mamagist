@@ -75,8 +75,8 @@ export function HomePage() {
       ) : loading || !card ? (
         <HomeSkeleton />
       ) : (
-        <div className="space-y-4">
-          <div className="mb-6">
+        <div className="space-y-3">
+          <div className="mb-4">
             <PageHeader
               label="Mamagist"
               title={greeting(now.getHours(), profile.data?.full_name ?? null)}
@@ -88,7 +88,7 @@ export function HomePage() {
           {card.kind === "pregnancy" && tip.data ? (
             <WhiteCard>
               <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
-              <p className="mt-2 text-[17px] leading-relaxed text-foreground">{tip.data}</p>
+              <p className="mt-2 text-base leading-relaxed text-foreground">{tip.data}</p>
             </WhiteCard>
           ) : null}
         </div>
@@ -102,12 +102,12 @@ function HomeSkeleton() {
     <div className="space-y-4" aria-busy="true" aria-label="Loading">
       <div className="mb-6 space-y-3">
         <Skeleton className="h-5 w-24 rounded-full" />
-        <Skeleton className="h-9 w-64 rounded-full" />
+        <Skeleton className="h-7 w-64 rounded-full" />
       </div>
-      <Skeleton className="h-44 w-full rounded-3xl" />
+      <Skeleton className="h-36 w-full rounded-[20px]" />
       <Skeleton className="h-24 w-full rounded-[20px]" />
-      <Skeleton className="h-40 w-full rounded-3xl" />
-      <Skeleton className="h-28 w-full rounded-[20px]" />
+      <Skeleton className="h-32 w-full rounded-[20px]" />
+      <Skeleton className="h-24 w-full rounded-[20px]" />
     </div>
   );
 }
@@ -118,15 +118,15 @@ function StageCard({ card }: { card: HomeCard }) {
   if (card.kind === "no_date") {
     return (
       <PeachCard>
-        <h2 className="text-[22px] leading-tight font-extrabold text-foreground">
+        <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
           Add your due date
         </h2>
-        <p className="mt-2 text-[17px] leading-relaxed text-foreground">
+        <p className="mt-2 text-base leading-relaxed text-foreground">
           Add your last period or due date to see your week.
         </p>
         <PrimaryButton
           type="button"
-          className="mt-5"
+          className="mt-4"
           onClick={() => void navigate({ to: "/pregnancy-date" })}
         >
           Add date
@@ -140,11 +140,11 @@ function StageCard({ card }: { card: HomeCard }) {
       <PeachCard>
         <p className="text-[15px] font-semibold text-foreground">Your baby</p>
         {card.babyAge ? (
-          <p className="mt-2 text-[40px] leading-tight font-extrabold tracking-tight text-foreground">
+          <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight text-foreground">
             {babyAgeText(card.babyAge)}
           </p>
         ) : (
-          <p className="mt-2 text-[17px] leading-relaxed text-foreground">
+          <p className="mt-2 text-base leading-relaxed text-foreground">
             Welcome. We are here for you and your baby.
           </p>
         )}
@@ -155,15 +155,15 @@ function StageCard({ card }: { card: HomeCard }) {
   return (
     <PeachCard>
       <p className="text-[15px] font-semibold text-foreground">Your pregnancy</p>
-      <p className="mt-2 text-[40px] leading-tight font-extrabold tracking-tight text-foreground">
+      <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight text-foreground">
         {weeksAndDays(card.age)}
       </p>
-      <p className="mt-1 text-[17px] text-foreground">
+      <p className="mt-1 text-base text-foreground">
         {trimesterName(card.age.trimester)} · Due {formatCalendarDate(card.dueDate)}
       </p>
-      <ProgressBar value={card.progress} className="mt-4" />
+      <ProgressBar value={card.progress} className="mt-3" />
       {card.pastFortyTwoWeeks ? (
-        <p className="mt-4 text-[17px] font-semibold text-foreground">
+        <p className="mt-4 text-base font-semibold text-foreground">
           Please talk to your clinic about your next steps.
         </p>
       ) : null}
@@ -189,12 +189,12 @@ function ChecklistCard() {
               <Skeleton className="h-2.5 w-full rounded-full" />
             </div>
           ) : checklist.status === "error" ? (
-            <p className="mt-1 text-[17px] text-foreground">See your tasks for today.</p>
+            <p className="mt-1 text-base text-foreground">See your tasks for today.</p>
           ) : checklist.total === 0 ? (
-            <p className="mt-1 text-[17px] text-foreground">No tasks for today.</p>
+            <p className="mt-1 text-base text-foreground">No tasks for today.</p>
           ) : (
             <>
-              <p className="mt-1 text-[17px] text-foreground">
+              <p className="mt-1 text-base text-foreground">
                 {doneText(checklist.done, checklist.total)}
               </p>
               <ProgressBar value={(checklist.done / checklist.total) * 100} className="mt-3" />
@@ -209,14 +209,14 @@ function ChecklistCard() {
 
 function AskDebbyCard() {
   return (
-    <div className="rounded-3xl bg-primary p-5 text-primary-foreground">
-      <h2 className="text-[22px] leading-tight font-extrabold">Ask Debby</h2>
-      <p className="mt-2 text-[17px] leading-relaxed">
+    <div className="rounded-[20px] bg-primary p-4 text-primary-foreground">
+      <h2 className="text-[20px] leading-tight font-extrabold">Ask Debby</h2>
+      <p className="mt-2 text-base leading-relaxed">
         Tell Debby how you feel today and get advice for your week.
       </p>
       <Link
         to="/debby"
-        className="mt-5 inline-flex h-12 items-center justify-center rounded-full bg-card px-6 text-[17px] font-bold text-card-foreground hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className="mt-4 inline-flex h-[52px] items-center justify-center rounded-full bg-card px-6 text-base font-bold text-card-foreground hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         Start chat
       </Link>

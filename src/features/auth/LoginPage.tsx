@@ -99,7 +99,7 @@ export function LoginPage() {
               "Log in"
             )}
           </PrimaryButton>
-          <p className="text-center text-[17px] text-foreground">
+          <p className="text-center text-base text-foreground">
             New here?{" "}
             <Link to="/signup" className="font-bold underline underline-offset-4">
               Create an account

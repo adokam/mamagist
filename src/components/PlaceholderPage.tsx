@@ -5,7 +5,7 @@ export function PlaceholderPage({ title, label }: { title: string; label?: strin
   return (
     <main className="page-shell">
       <PageHeader title={title} label={label} />
-      <p className="mt-3 text-[17px] leading-relaxed text-foreground">Coming in a later step.</p>
+      <p className="mt-3 text-base leading-relaxed text-foreground">Coming in a later step.</p>
     </main>
   );
 }

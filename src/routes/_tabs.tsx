@@ -12,7 +12,7 @@ function TabsLayout() {
   return (
     <RequireAuth>
       {/* Bottom space so the bar (and the phone's safe area) never covers content. */}
-      <div className="pb-[calc(8rem+env(safe-area-inset-bottom))]">
+      <div className="pb-[calc(6rem+env(safe-area-inset-bottom))]">
         <Outlet />
       </div>
       <BottomBar />

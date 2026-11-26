@@ -69,12 +69,10 @@ export function homeCard(profile: ProfileSummary, today: CalendarDate): HomeCard
   };
 }
 
-/** "26 weeks, 4 days". */
+/** "26 weeks, 4 days" — always both parts, even "0 weeks, 3 days". */
 export function weeksAndDays({ weeks, days }: PregnancyAge): string {
   const w = `${weeks} ${weeks === 1 ? "week" : "weeks"}`;
   const d = `${days} ${days === 1 ? "day" : "days"}`;
-  if (weeks === 0) return d;
-  if (days === 0) return w;
   return `${w}, ${d}`;
 }
 

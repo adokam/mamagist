@@ -89,7 +89,7 @@ export function DetailsPage() {
       <div className="mt-8">
         <PageHeader label="Step 3 of 3" title="Tell us a little about you" />
       </div>
-      <p className="mt-4 text-[17px] leading-relaxed text-foreground">
+      <p className="mt-4 text-base leading-relaxed text-foreground">
         This is optional. You can change it later.
       </p>
 

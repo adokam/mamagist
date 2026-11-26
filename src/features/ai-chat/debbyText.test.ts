@@ -19,6 +19,13 @@ describe("guideLine", () => {
     );
   });
 
+  it("shows 0 weeks when she is only a few days in", () => {
+    // 2026-11-15 to 2026-11-18 is 3 days: 0 weeks, 3 days.
+    expect(guideLine({ ...base, last_period_date: "2026-11-15" }, today)).toBe(
+      "Your pregnancy guide · 0 weeks, 3 days",
+    );
+  });
+
   it("no date shows only the guide line", () => {
     expect(guideLine(base, today)).toBe("Your pregnancy guide");
   });

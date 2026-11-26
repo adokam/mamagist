@@ -13,7 +13,7 @@ export function AuthLoadingScreen() {
       aria-live="polite"
     >
       <Loader2 className="h-8 w-8 animate-spin" aria-hidden />
-      <p className="text-[17px] font-semibold">Loading…</p>
+      <p className="text-base font-semibold">Loading…</p>
     </main>
   );
 }
