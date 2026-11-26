@@ -83,6 +83,20 @@ export function CommunityPage() {
                 onClick: () => {},
               },
               {
+                label: "My groups",
+                onClick: () =>
+                  void navigate({ to: "/community/groups", state: { focus: "mine" } }),
+              },
+              {
+                label: "All groups",
+                onClick: () => void navigate({ to: "/community/groups" }),
+              },
+              {
+                label: "Create a group",
+                onClick: () =>
+                  void navigate({ to: "/community/groups", state: { createGroup: true } }),
+              },
+              {
                 label: "Settings",
                 onClick: () => void navigate({ to: "/settings" }),
               },

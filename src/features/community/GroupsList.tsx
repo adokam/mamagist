@@ -2,8 +2,8 @@
 // A group is a smaller feed inside the community. The mother who creates
 // a group is its admin.
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 
 import { LoadError } from "@/components/LoadError";
 import { PrimaryButton } from "@/components/Buttons";
@@ -19,13 +19,22 @@ import {
   joinGroup,
   type CommunityGroupRow,
 } from "./communityApi";
+import { groupsListInitialState } from "./groupsListState";
 
 export function GroupsList() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [showCreate, setShowCreate] = useState(false);
+  // The community menu can send us here with a request: open the create
+  // form, or jump to My groups.
+  const initial = groupsListInitialState(useLocation().state);
+  const [showCreate, setShowCreate] = useState(initial.showCreate);
+  const myGroupsRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (initial.focusMine) myGroupsRef.current?.scrollIntoView();
+  }, [initial.focusMine]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [creating, setCreating] = useState(false);
@@ -165,7 +174,9 @@ export function GroupsList() {
 
       {myGroups.length > 0 ? (
         <>
-          <h2 className="mt-6 text-[20px] font-extrabold text-ink">My groups</h2>
+          <h2 ref={myGroupsRef} className="mt-6 text-[20px] font-extrabold text-ink">
+            My groups
+          </h2>
           <div className="mt-3 space-y-3">
             {myGroups.map((group) => (
               <GroupRow
