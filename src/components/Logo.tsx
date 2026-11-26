@@ -17,10 +17,19 @@ function HeartMark({ className }: { className?: string }) {
 }
 
 /** Mamagist logo mark: a rounded primary square with a white heart. */
-export function LogoMark({ onPrimary = false }: { onPrimary?: boolean }) {
+export function LogoMark({
+  onPrimary = false,
+  className,
+}: {
+  onPrimary?: boolean;
+  className?: string;
+}) {
   return (
     <HeartMark
-      className={onPrimary ? "bg-primary-contrast text-primary" : undefined}
+      className={cn(
+        onPrimary ? "bg-primary-contrast text-primary" : undefined,
+        className,
+      )}
     />
   );
 }

@@ -1,93 +1,206 @@
-import { useQuery } from "@tanstack/react-query";
+// The community feed: one big feed for all mothers, like the Facebook
+// home feed in the user's screenshot, but in Mamagist's own Fresh Green
+// look. Top bar with our logo, a "+" to post, and the avatar that opens
+// the menu. Under it, Feed and Groups tabs, the composer, then the posts,
+// newest first. Groups arrive in Part 3; until then the Groups tab says so.
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { Image as ImageIcon, Newspaper, Plus, Users } from "lucide-react";
 import { useState } from "react";
 
-import { PrimaryButton } from "@/components/Buttons";
 import { LoadError } from "@/components/LoadError";
-import { PageHeader } from "@/components/PageHeader";
+import { LogoMark } from "@/components/Logo";
 import { useAuth } from "@/features/auth/AuthProvider";
-import { FormError } from "@/features/auth/FormField";
-import { friendlySaveError } from "@/features/profile/saveError";
-import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
-import { isAlreadyOnList } from "./notify";
+import { Composer } from "./Composer";
+import { fetchFeedPosts, fetchOwnFirstName } from "./communityApi";
+import { CommunityMenu } from "./CommunityMenu";
+import { authorDisplayName, firstName } from "./displayName";
+import { AuthorAvatar, PostCard } from "./PostCard";
 
-/** Community waiting list, from the design in docs/design/community.jpg. */
+type CommunityView = "feed" | "groups";
+
 export function CommunityPage() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [view, setView] = useState<CommunityView>("feed");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
 
-  // Her own notify_list row for topic community, if she already joined.
-  const existing = useQuery({
-    queryKey: ["notify-list", userId, "community"],
-    enabled: Boolean(userId),
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notify_list")
-        .select("id")
-        .eq("user_id", userId)
-        .eq("topic", "community")
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+  const feed = useQuery({
+    queryKey: ["community-feed", userId],
+    enabled: Boolean(userId) && view === "feed",
+    queryFn: () => fetchFeedPosts(userId),
   });
 
-  const onList = existing.data !== null && existing.data !== undefined;
+  const myName = useQuery({
+    queryKey: ["community-my-first-name", userId],
+    enabled: Boolean(userId),
+    queryFn: () => fetchOwnFirstName(userId),
+  });
+  const myFirstName = firstName(myName.data ?? null);
 
-  async function onNotify() {
-    if (!userId || saving || onList) return;
-    setSaving(true);
-    setSaveError(null);
-    const { error } = await supabase
-      .from("notify_list")
-      .insert({ user_id: userId, topic: "community" });
-    setSaving(false);
-    if (error) {
-      // A second tap, or a row already there, is not an error: she is on the list.
-      if (isAlreadyOnList(error)) {
-        await existing.refetch();
-        return;
-      }
-      setSaveError(friendlySaveError(error));
-      return;
-    }
-    await existing.refetch();
+  function refreshFeed() {
+    void queryClient.invalidateQueries({ queryKey: ["community-feed", userId] });
   }
 
   return (
     <main className="page-shell">
-      <PageHeader title="Community" />
-      {existing.isError ? (
-        <div className="mt-4">
-          <LoadError onRetry={() => void existing.refetch()} />
+      {/* Top bar: our logo on the left, post button and avatar on the right. */}
+      <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <LogoMark className="h-10 w-10 rounded-[12px]" />
+          <span className="text-[22px] leading-none font-extrabold tracking-tight text-ink">
+            Mamagist
+          </span>
         </div>
-      ) : (
+        <button
+          type="button"
+          onClick={() => {
+            setView("feed");
+            setComposerOpen(true);
+          }}
+          aria-label="Write a post"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface text-ink"
+        >
+          <Plus className="h-6 w-6" aria-hidden />
+        </button>
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label="Community menu"
+            aria-expanded={menuOpen}
+            className="grid h-11 w-11 place-items-center rounded-full bg-primary text-[18px] font-extrabold text-primary-contrast"
+          >
+            {authorDisplayName(myFirstName || "M").trim()[0]?.toUpperCase() ?? "M"}
+          </button>
+          <CommunityMenu
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+            items={[
+              {
+                label: "Feed",
+                onClick: () => setView("feed"),
+              },
+              {
+                label: "Settings",
+                onClick: () => void navigate({ to: "/settings" }),
+              },
+            ]}
+          />
+        </div>
+      </div>
+
+      {/* Icon row: Feed and Groups. Only these two, both working. */}
+      <div className="mt-4 flex border-b border-line">
+        <button
+          type="button"
+          onClick={() => setView("feed")}
+          aria-current={view === "feed" ? "page" : undefined}
+          className={cn(
+            "flex flex-1 items-center justify-center gap-2 border-b-2 py-3 text-base font-bold",
+            view === "feed" ? "border-primary text-primary" : "border-transparent text-muted",
+          )}
+        >
+          <Newspaper className="h-5 w-5" aria-hidden /> Feed
+        </button>
+        <button
+          type="button"
+          onClick={() => setView("groups")}
+          aria-current={view === "groups" ? "page" : undefined}
+          className={cn(
+            "flex flex-1 items-center justify-center gap-2 border-b-2 py-3 text-base font-bold",
+            view === "groups" ? "border-primary text-primary" : "border-transparent text-muted",
+          )}
+        >
+          <Users className="h-5 w-5" aria-hidden /> Groups
+        </button>
+      </div>
+
+      {view === "feed" ? (
         <>
-          <div className="mt-4 rounded-[20px] bg-accent p-4 text-ink">
-            <h2 className="text-[20px] leading-tight font-extrabold">
-              Community is coming soon
-            </h2>
-            <p className="mt-2 text-base leading-relaxed">
-              Meet other mothers. Join groups by due month. Share your day and
-              celebrate together.
-            </p>
-            <PrimaryButton
-              type="button"
-              className="mt-4"
-              disabled={saving || onList || existing.isPending}
-              aria-busy={saving}
-              onClick={() => void onNotify()}
-            >
-              {onList ? "You are on the list" : saving ? "Saving…" : "Notify me"}
-            </PrimaryButton>
+          {/* Composer card, like "What's on your mind?" with a Photo button. */}
+          <div className="mt-4">
+            {composerOpen ? (
+              <Composer
+                userId={userId}
+                groupId={null}
+                firstName={myFirstName}
+                onPosted={() => {
+                  setComposerOpen(false);
+                  refreshFeed();
+                }}
+                onCancel={() => setComposerOpen(false)}
+              />
+            ) : (
+              <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
+                <AuthorAvatar name={myFirstName || "M"} />
+                <button
+                  type="button"
+                  onClick={() => setComposerOpen(true)}
+                  className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
+                >
+                  Share with other mothers…
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setComposerOpen(true)}
+                  className="flex shrink-0 flex-col items-center gap-0.5 text-primary"
+                  aria-label="Share a photo"
+                >
+                  <ImageIcon className="h-6 w-6" aria-hidden />
+                  <span className="text-[13px] font-bold">Photo</span>
+                </button>
+              </div>
+            )}
           </div>
-          <p className="mt-4 text-center text-base text-foreground">
-            We will tell you the day it opens.
-          </p>
-          <FormError message={saveError} />
+
+          {/* The feed. */}
+          <div className="mt-4 space-y-4">
+            {feed.isPending ? (
+              <p className="rounded-[20px] bg-card p-4 text-base text-muted">Loading posts…</p>
+            ) : feed.isError ? (
+              <LoadError onRetry={() => void feed.refetch()} />
+            ) : (feed.data ?? []).length === 0 ? (
+              <div className="rounded-[20px] border border-line bg-card p-4 text-center">
+                <p className="text-[20px] font-extrabold text-ink">No posts yet</p>
+                <p className="mt-2 text-base text-muted">
+                  Be the first to share something with other mothers.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setComposerOpen(true)}
+                  className="mt-4 flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast"
+                >
+                  Share a post
+                </button>
+              </div>
+            ) : (
+              (feed.data ?? []).map((post) => (
+                <PostCard key={post.id} post={post} userId={userId} onChanged={refreshFeed} />
+              ))
+            )}
+          </div>
         </>
+      ) : (
+        <div className="mt-4 rounded-[20px] border border-line bg-card p-4 text-center">
+          <p className="text-[20px] font-extrabold text-ink">Groups are coming next</p>
+          <p className="mt-2 text-base text-muted">
+            You will be able to join groups and create your own — by due month, or any group you
+            want. The big feed above is open now.
+          </p>
+          <button
+            type="button"
+            onClick={() => setView("feed")}
+            className="mt-4 flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast"
+          >
+            Back to the feed
+          </button>
+        </div>
       )}
     </main>
   );
