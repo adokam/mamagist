@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { PeachCard, WhiteCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
@@ -8,12 +9,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FormError } from "@/features/auth/FormField";
 import { cn } from "@/lib/utils";
 
+import { readLastDailyTasks, saveLastDailyTasks } from "@/features/pwa/offlineCache";
+
 import { doneText, streakText, tasksLeftText } from "./checklistText";
 import type { DailyTask } from "./selectTasks";
 import { useDailyChecklist } from "./useDailyChecklist";
 
 export function DailyPage() {
   const checklist = useDailyChecklist();
+  // Last-loaded task titles, kept on the device only, so Daily can show them offline.
+  const [savedTitles] = useState(() => readLastDailyTasks());
+  useEffect(() => {
+    if (checklist.status === "ready") {
+      saveLastDailyTasks(checklist.tasks.map((t) => t.title));
+    }
+  }, [checklist]);
 
   return (
     <main className="page-shell">
@@ -21,7 +31,23 @@ export function DailyPage() {
         <PageHeader label="Daily checklist" title="Today" />
       </div>
       {checklist.status === "error" ? (
-        <LoadError onRetry={checklist.retry} />
+        <div className="space-y-4">
+          {savedTitles ? (
+            <WhiteCard>
+              <p className="text-base font-semibold text-foreground">
+                You are offline. Showing your last tasks.
+              </p>
+              <ul className="mt-3 space-y-2">
+                {savedTitles.map((title) => (
+                  <li key={title} className="text-base leading-snug text-foreground">
+                    {title}
+                  </li>
+                ))}
+              </ul>
+            </WhiteCard>
+          ) : null}
+          <LoadError onRetry={checklist.retry} />
+        </div>
       ) : checklist.status === "loading" ? (
         <DailySkeleton />
       ) : checklist.total === 0 ? (

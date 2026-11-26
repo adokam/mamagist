@@ -134,3 +134,9 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 - Quick reply chips are in chips.ts (pregnant or empty stage vs new mother and breastfeeding).
 - Messages are text only (never HTML or markdown), kept in memory only (never in local storage), and never logged to the console or analytics. Max 1000 characters; a counter shows after 900.
 - Layout: header at the top, only the messages scroll, the note and input sit above the bottom bar, sized with dynamic viewport units. When the phone keyboard opens, the screen follows the visible area so the input stays in view.
+
+## PWA install
+- Icons in `public/`: `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `favicon.png` (deep green rounded square with a cream heart) and `icon.svg` (the same mark). The manifest is `public/manifest.webmanifest` (start URL /home, standalone, cream background, deep green theme).
+- The service worker `public/sw.js` is registered in `src/routes/__root.tsx`. It caches only the app shell (offline page and icon) and same-origin static files. It never caches Supabase auth, debby-chat, chat messages, dates, names or health data. Failed page visits show `public/offline.html`.
+- `/install` (InstallPage) explains Android (browser install prompt) and iPhone (Share > Add to Home Screen, iOS 16.4 or newer, Safari). Home shows a small dismissible InstallCard that links to it and hides when the app is already installed (`src/features/pwa/useInstallPrompt.ts`).
+- Offline content: only generic daily task titles and the weekly tip text are kept in localStorage (`src/features/pwa/offlineCache.ts`), so Daily and Home can show what was last loaded when there is no internet.

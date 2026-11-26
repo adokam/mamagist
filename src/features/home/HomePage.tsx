@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
 import { PeachCard, WhiteCard } from "@/components/Cards";
@@ -17,6 +17,8 @@ import {
   todayInLocalTimeZone,
 } from "@/features/pregnancy-calculator/calendarDate";
 import { profileSummaryQuery } from "@/features/profile/privateProfile";
+import { InstallCard } from "@/features/pwa/InstallCard";
+import { readLastWeeklyTip, saveLastWeeklyTip } from "@/features/pwa/offlineCache";
 import { supabase } from "@/integrations/supabase/client";
 
 import {
@@ -56,8 +58,13 @@ export function HomePage() {
   const card = profile.data ? homeCard(profile.data, today) : null;
   const tipWeek = card?.kind === "pregnancy" ? card.tipWeek : null;
   const tip = useQuery(weeklyTipQuery(tipWeek));
+  // Last-loaded tip text, kept on the device only, so Home can show it offline.
+  const [savedTip] = useState(() => readLastWeeklyTip());
+  useEffect(() => {
+    if (tip.data) saveLastWeeklyTip(tip.data);
+  }, [tip.data]);
 
-  const failed = profile.isError || tip.isError;
+  const failed = profile.isError;
   const loading = profile.isPending || (tipWeek !== null && tip.isPending);
 
   return (
@@ -85,10 +92,17 @@ export function HomePage() {
           <StageCard card={card} />
           <ChecklistCard />
           <AskDebbyCard />
+          <InstallCard />
           {card.kind === "pregnancy" && tip.data ? (
             <WhiteCard>
               <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
               <p className="mt-2 text-base leading-relaxed text-foreground">{tip.data}</p>
+            </WhiteCard>
+          ) : card.kind === "pregnancy" && tip.isError && savedTip ? (
+            <WhiteCard>
+              <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
+              <p className="mt-2 text-base leading-relaxed text-foreground">{savedTip}</p>
+              <p className="mt-2 text-[15px] text-foreground">Saved from your last visit.</p>
             </WhiteCard>
           ) : null}
         </div>
