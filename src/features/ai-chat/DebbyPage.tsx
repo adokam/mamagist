@@ -175,7 +175,7 @@ function Bubble({
         <p
           className={cn(
             bubbleText,
-            "max-w-[85%] rounded-[20px] rounded-br-[4px] bg-primary px-4 py-3 text-primary-foreground",
+            "max-w-[85%] rounded-[20px] rounded-br-[4px] bg-primary px-4 py-3 text-primary-contrast",
           )}
         >
           {item.text}

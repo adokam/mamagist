@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { SurfaceCard, WhiteCard } from "@/components/Cards";
+import { SurfaceCard, LineCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -33,7 +33,7 @@ export function DailyPage() {
       {checklist.status === "error" ? (
         <div className="space-y-4">
           {savedTitles ? (
-            <WhiteCard>
+            <LineCard>
               <p className="text-base font-semibold text-foreground">
                 You are offline. Showing your last tasks.
               </p>
@@ -44,7 +44,7 @@ export function DailyPage() {
                   </li>
                 ))}
               </ul>
-            </WhiteCard>
+            </LineCard>
           ) : null}
           <LoadError onRetry={checklist.retry} />
         </div>
@@ -52,9 +52,9 @@ export function DailyPage() {
         <DailySkeleton />
       ) : checklist.total === 0 ? (
         <div className="space-y-4">
-          <WhiteCard>
+          <LineCard>
             <p className="text-base font-semibold text-foreground">No tasks for today.</p>
-          </WhiteCard>
+          </LineCard>
           <DoctorNote />
         </div>
       ) : (
@@ -85,7 +85,7 @@ export function DailyPage() {
             ))}
           </ul>
 
-          <div className="rounded-[20px] bg-primary p-4 text-primary-foreground">
+          <div className="rounded-[20px] bg-primary p-4 text-primary-contrast">
             {checklist.done < checklist.total ? (
               <>
                 <h2 className="text-[20px] leading-tight font-extrabold">
@@ -133,7 +133,7 @@ function TaskCard({
         className={cn(
           "grid h-6 w-6 shrink-0 place-items-center rounded-[3px]",
           done
-            ? "bg-primary text-primary-foreground"
+            ? "bg-primary text-primary-contrast"
             : "border-[1.5px] border-muted-foreground bg-surface",
         )}
       >

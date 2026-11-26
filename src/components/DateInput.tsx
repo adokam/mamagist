@@ -32,7 +32,7 @@ export function DateInput({ value, displayValue, placeholder = "Choose a date", 
       />
       <div
         aria-hidden
-        className="flex h-12 w-full items-center rounded-full border border-input bg-surface px-5 text-base text-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
+        className="flex h-12 w-full items-center rounded-full border border-input bg-card px-5 text-base text-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
       >
         {displayValue ?? <span className="text-muted-foreground">{placeholder}</span>}
       </div>

@@ -9,7 +9,7 @@ const base =
 export function PrimaryButton({ className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className={cn(base, "bg-primary text-primary-foreground hover:opacity-90", className)}
+      className={cn(base, "bg-primary text-primary-contrast hover:opacity-90", className)}
       {...props}
     />
   );

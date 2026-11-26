@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
-import { SurfaceCard, WhiteCard } from "@/components/Cards";
+import { SurfaceCard, LineCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -94,16 +94,16 @@ export function HomePage() {
           <AskDebbyCard />
           <InstallCard />
           {card.kind === "pregnancy" && tip.data ? (
-            <WhiteCard>
+            <LineCard>
               <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
               <p className="mt-2 text-base leading-relaxed text-foreground">{tip.data}</p>
-            </WhiteCard>
+            </LineCard>
           ) : card.kind === "pregnancy" && tip.isError && savedTip ? (
-            <WhiteCard>
+            <LineCard>
               <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
               <p className="mt-2 text-base leading-relaxed text-foreground">{savedTip}</p>
               <p className="mt-2 text-[15px] text-foreground">Saved from your last visit.</p>
-            </WhiteCard>
+            </LineCard>
           ) : null}
         </div>
       )}
@@ -192,7 +192,7 @@ function ChecklistCard() {
       to="/daily"
       className="block rounded-[20px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
-      <WhiteCard className="flex items-center gap-4">
+      <LineCard className="flex items-center gap-4">
         <div className="flex-1">
           <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
             Today's checklist
@@ -216,14 +216,14 @@ function ChecklistCard() {
           )}
         </div>
         <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
-      </WhiteCard>
+      </LineCard>
     </Link>
   );
 }
 
 function AskDebbyCard() {
   return (
-    <div className="rounded-[20px] bg-primary p-4 text-primary-foreground">
+    <div className="rounded-[20px] bg-primary p-4 text-primary-contrast">
       <h2 className="text-[20px] leading-tight font-extrabold">Ask Debby</h2>
       <p className="mt-2 text-base leading-relaxed">
         Tell Debby how you feel today and get advice for your week.

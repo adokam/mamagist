@@ -9,7 +9,7 @@ export function SelectInput({ className, children, ...props }: SelectHTMLAttribu
     <div className="relative">
       <select
         className={cn(
-          "h-12 w-full appearance-none rounded-full border border-input bg-surface px-5 pr-12 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "h-12 w-full appearance-none rounded-full border border-input bg-card px-5 pr-12 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           className,
         )}
         {...props}

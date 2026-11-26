@@ -4,7 +4,7 @@ import { ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { OutlineButton, PrimaryButton } from "@/components/Buttons";
-import { SurfaceCard, WhiteCard } from "@/components/Cards";
+import { SurfaceCard, LineCard } from "@/components/Cards";
 import { ChoiceButton } from "@/components/ChoiceButton";
 import { DateInput } from "@/components/DateInput";
 import { LoadError } from "@/components/LoadError";
@@ -163,7 +163,7 @@ export function ProfilePage() {
             </OutlineButton>
           </SurfaceCard>
 
-          <WhiteCard>
+          <LineCard>
             <DetailRow label="Stage" value={data.stage ? STAGE_LABELS[data.stage] : null} />
             <DetailRow label="State" value={data.state} />
             <DetailRow
@@ -181,16 +181,16 @@ export function ProfilePage() {
             <PrimaryButton type="button" className="mt-4" onClick={() => setEditing(true)}>
               Edit details
             </PrimaryButton>
-          </WhiteCard>
+          </LineCard>
 
           <Link
             to="/settings"
             className="block rounded-[20px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
-            <WhiteCard className="flex items-center justify-between gap-3">
+            <LineCard className="flex items-center justify-between gap-3">
               <span className="text-base font-bold text-foreground">Settings</span>
               <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
-            </WhiteCard>
+            </LineCard>
           </Link>
         </div>
       )}

@@ -68,7 +68,7 @@ export function ResetPasswordPage() {
         <div className="mt-auto pt-8">
           <Link
             to="/forgot-password"
-            className="flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             Ask for a new link
           </Link>

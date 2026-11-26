@@ -34,6 +34,8 @@
   --color-line: var(--line);
   --color-primary: var(--primary);
   --color-primary-contrast: var(--primary-contrast);
+  /* Alias for shadcn ui components that use text-primary-foreground. */
+  --color-primary-foreground: var(--primary-contrast);
   --color-accent: var(--accent);
   --color-alert: var(--alert);
   --color-alert-border: var(--alert-border);

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { WhiteCard } from "@/components/Cards";
+import { LineCard } from "@/components/Cards";
 
 import { useInstallPrompt } from "./useInstallPrompt";
 
@@ -9,7 +9,7 @@ export function InstallCard() {
   const { installed, dismissed, dismiss } = useInstallPrompt();
   if (installed || dismissed) return null;
   return (
-    <WhiteCard>
+    <LineCard>
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
@@ -20,7 +20,7 @@ export function InstallCard() {
           </p>
           <Link
             to="/install"
-            className="mt-3 inline-flex h-[52px] items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="mt-3 inline-flex h-[52px] items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             How to install
           </Link>
@@ -34,6 +34,6 @@ export function InstallCard() {
           ✕
         </button>
       </div>
-    </WhiteCard>
+    </LineCard>
   );
 }

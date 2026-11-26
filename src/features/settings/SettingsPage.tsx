@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { OutlineButton } from "@/components/Buttons";
-import { WhiteCard } from "@/components/Cards";
+import { LineCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
 import { useAuth } from "@/features/auth/AuthProvider";
@@ -92,7 +92,7 @@ export function SettingsPage() {
         </div>
       ) : (
         <div className="mt-4 space-y-3">
-          <WhiteCard>
+          <LineCard>
             <Row label="Dark mode" hint={choice === "system" ? "Using your phone setting" : null}>
               <button
                 type="button"
@@ -108,9 +108,9 @@ export function SettingsPage() {
                 <span className="h-6 w-6 rounded-full bg-surface" />
               </button>
             </Row>
-          </WhiteCard>
+          </LineCard>
 
-          <WhiteCard>
+          <LineCard>
             <Row label="Daily reminders">
               <button
                 type="button"
@@ -152,13 +152,13 @@ export function SettingsPage() {
               <p className="mt-1 text-[15px] font-semibold text-foreground">Saved.</p>
             ) : null}
             <FormError message={saveError} />
-          </WhiteCard>
+          </LineCard>
 
-          <WhiteCard>
+          <LineCard>
             <Row label="Language" hint="Debby answers in the language you write.">
               <span className="text-base font-bold text-foreground">English</span>
             </Row>
-          </WhiteCard>
+          </LineCard>
 
           <LinkRow to="/install" label="Install the app" />
           <LinkRow to="/privacy" label="Privacy policy" />
@@ -198,10 +198,10 @@ function Row({
 function LinkRow({ to, label }: { to: "/install" | "/privacy" | "/terms"; label: string }) {
   return (
     <Link to={to} className="block rounded-[20px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
-      <WhiteCard className="flex items-center justify-between gap-3">
+      <LineCard className="flex items-center justify-between gap-3">
         <span className="text-base font-bold text-foreground">{label}</span>
         <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
-      </WhiteCard>
+      </LineCard>
     </Link>
   );
 }

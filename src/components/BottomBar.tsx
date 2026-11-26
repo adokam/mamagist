@@ -47,7 +47,7 @@ export function BottomBar() {
           to="/community"
           className="flex min-w-11 flex-1 flex-col items-center justify-end gap-0.5 pb-1 text-foreground"
         >
-          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground ring-[6px] ring-background">
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary text-primary-contrast ring-[6px] ring-background">
             <Users className="h-6 w-6" strokeWidth={2} aria-hidden />
           </span>
           <span className="mt-2 text-[13px] leading-tight font-bold">Community</span>
