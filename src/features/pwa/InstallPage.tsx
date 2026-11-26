@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
+import { Logo } from "@/components/Logo";
 import { PageHeader } from "@/components/PageHeader";
 
 import { isIOS, isInstalled, useInstallPrompt } from "./useInstallPrompt";
@@ -22,7 +23,10 @@ export function InstallPage() {
 
   return (
     <main className="page-shell">
-      <PageHeader title="Install Mamagist" />
+      <Logo />
+      <div className="mt-4">
+        <PageHeader title="Install Mamagist" />
+      </div>
       <p className="mt-3 text-base leading-relaxed text-foreground">
         Add Mamagist to your home screen so it opens like an app, even when your
         connection is slow.

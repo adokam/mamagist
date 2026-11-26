@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { AuthLogoMark } from "@/features/auth/AuthIntro";
+import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -17,8 +17,7 @@ export function AuthHero() {
       <div aria-hidden className="absolute top-24 -left-10 h-32 w-32 rounded-full bg-primary-contrast/10" />
       <div aria-hidden className="absolute right-16 bottom-6 h-16 w-16 rounded-full bg-primary-contrast/10" />
       <div className="relative flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
-        <AuthLogoMark />
-        <p className="text-2xl font-extrabold tracking-tight text-primary-contrast">Mamagist</p>
+        <Logo onPrimary />
         <p className="text-base text-primary-contrast/90">Your pregnancy guide, week by week.</p>
       </div>
     </div>
