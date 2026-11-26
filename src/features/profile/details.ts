@@ -7,6 +7,8 @@ export const LIFE_STAGES: { value: LifeStage; label: string }[] = [
 ];
 
 export type DetailsForm = {
+  /** Full name. Optional here: signup step 1 already saved it. */
+  fullName?: string;
   stage: LifeStage | null;
   firstBaby: boolean | null;
   state: string;
@@ -17,6 +19,7 @@ export type DetailsForm = {
 /** Only the fields she filled in. The baby birth date is saved only for a new mother. */
 export function detailsUpdate(form: DetailsForm): PrivateProfileUpdate {
   const out: PrivateProfileUpdate = {};
+  if (form.fullName?.trim()) out.full_name = form.fullName.trim();
   if (form.stage) out.stage = form.stage;
   if (form.firstBaby !== null) out.first_baby = form.firstBaby;
   if (form.state) out.state = form.state;

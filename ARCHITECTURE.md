@@ -146,3 +146,6 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 - Dark mode (`src/features/settings/darkMode.ts`): saved on the device in localStorage as light, dark or system; system follows the phone setting and is the default. The `.dark` class on `<html>` switches the tokens in `src/styles.css`; `initTheme` runs once in `src/routes/__root.tsx`.
 - Reminders save `reminders_enabled` and `reminder_time` to her own private_profiles row only. The screen says "Reminders will start soon." — sending is built later.
 - Language shows English with the note "Debby answers in the language you write."
+
+## Profile
+- `/profile` (ProfilePage): her name, her week and due date with an "Edit date" button to /pregnancy-date, and her stage, state, first baby answer and baby birth date when they exist. "Edit details" opens a form for full name, stage, first baby, state and baby birth date; it saves to her own private_profiles row with the same rules as signup step 3 (`detailsUpdate` in `src/features/profile/details.ts`, birth date never in the future) and shows friendly errors. A row links to /settings. Log out lives in Settings, not on Profile.

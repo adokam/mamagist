@@ -28,6 +28,13 @@ describe("signup details", () => {
     });
   });
 
+  it("saves a trimmed full name when given", () => {
+    expect(detailsUpdate({ ...empty, fullName: "  Ada Obi " })).toEqual({
+      full_name: "Ada Obi",
+    });
+    expect(detailsUpdate({ ...empty, fullName: "   " })).toEqual({});
+  });
+
   it("uses the database stage values", () => {
     expect(LIFE_STAGES.map((s) => s.value)).toEqual(["pregnant", "new_mother", "breastfeeding"]);
   });
