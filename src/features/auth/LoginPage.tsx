@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
+import { AuthLogoMark, AuthWarmLine } from "@/features/auth/AuthIntro";
 import { PageHeader } from "@/components/PageHeader";
 import { TextInput } from "@/components/TextInput";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,8 +51,12 @@ export function LoginPage() {
   }
 
   return (
-    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]">
-      <PageHeader title="Welcome back" />
+    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))] bg-[linear-gradient(180deg,var(--background),var(--card))]">
+      <AuthLogoMark />
+      <div className="mt-4">
+        <PageHeader title="Welcome back" />
+      </div>
+      <AuthWarmLine />
 
       <form noValidate onSubmit={onSubmit} className="mt-8 flex flex-1 flex-col">
         <div className="space-y-5">

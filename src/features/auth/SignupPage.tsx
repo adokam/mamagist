@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
+import { AuthLogoMark, AuthWarmLine } from "@/features/auth/AuthIntro";
 import { PageHeader } from "@/components/PageHeader";
 import { StepProgress } from "@/components/StepProgress";
 import { TextInput } from "@/components/TextInput";
@@ -77,8 +78,12 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
 
   if (checkEmailFor) {
     return (
-      <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]">
-        <PageHeader title="Check your email" />
+      <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))] bg-[linear-gradient(180deg,var(--background),var(--card))]">
+        <AuthLogoMark />
+        <div className="mt-4">
+          <PageHeader title="Check your email" />
+        </div>
+        <AuthWarmLine />
         <p className="mt-3 text-base leading-relaxed text-foreground">
           We sent a link to <span className="font-bold">{checkEmailFor}</span>. Open it to confirm
           your account, then log in.
@@ -93,11 +98,15 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
   }
 
   return (
-    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]">
+    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))] bg-[linear-gradient(180deg,var(--background),var(--card))]">
       <StepProgress current={1} total={3} />
       <div className="mt-8">
+        <AuthLogoMark />
+      </div>
+      <div className="mt-4">
         <PageHeader label="Step 1 of 3" title="Create your account" />
       </div>
+      <AuthWarmLine />
 
       <form noValidate onSubmit={onSubmit} className="mt-8 flex flex-1 flex-col">
         <div className="space-y-5">

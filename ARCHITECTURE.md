@@ -157,3 +157,6 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 ## Community
 - `/community` (CommunityPage, from docs/design/community.jpg): title, a peach card "Community is coming soon" with the Notify me button inside, and "We will tell you the day it opens." underneath.
 - Notify me inserts one row into notify_list (user_id, topic "community"). The table has a unique (user_id, topic) rule and RLS that only lets her insert her own rows, so a second tap cannot make a duplicate — it is treated as already on the list. After it works the button reads "You are on the list" and stays that way on later visits (her row is read on load).
+
+## Login and signup look
+- /login and /signup (step 1, and the "Check your email" screen) use a soft cream-to-peach gradient made from the existing background and card tokens, a small Mamagist logo mark (deep green rounded square with a cream heart, `src/features/auth/AuthIntro.tsx`) above the title, and the line "Your pregnancy guide, week by week." under the title. No photos, no external images, no new fonts. The signup steps and validation are unchanged.
