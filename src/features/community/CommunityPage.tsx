@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
-import { SurfaceCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
 import { useAuth } from "@/features/auth/AuthProvider";
@@ -66,11 +65,11 @@ export function CommunityPage() {
         </div>
       ) : (
         <>
-          <SurfaceCard className="mt-4">
-            <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
+          <div className="mt-4 rounded-[20px] bg-accent p-4 text-ink">
+            <h2 className="text-[20px] leading-tight font-extrabold">
               Community is coming soon
             </h2>
-            <p className="mt-2 text-base leading-relaxed text-foreground">
+            <p className="mt-2 text-base leading-relaxed">
               Meet other mothers. Join groups by due month. Share your day and
               celebrate together.
             </p>
@@ -83,7 +82,7 @@ export function CommunityPage() {
             >
               {onList ? "You are on the list" : saving ? "Saving…" : "Notify me"}
             </PrimaryButton>
-          </SurfaceCard>
+          </div>
           <p className="mt-4 text-center text-base text-foreground">
             We will tell you the day it opens.
           </p>

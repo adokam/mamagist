@@ -105,7 +105,7 @@ export function SettingsPage() {
                   dark ? "justify-end bg-primary" : "justify-start bg-line",
                 )}
               >
-                <span className="h-6 w-6 rounded-full bg-surface" />
+                <span className="h-6 w-6 rounded-full bg-primary-contrast" />
               </button>
             </Row>
           </LineCard>
@@ -128,7 +128,7 @@ export function SettingsPage() {
                   enabled ? "justify-end bg-primary" : "justify-start bg-line",
                 )}
               >
-                <span className="h-6 w-6 rounded-full bg-surface" />
+                <span className="h-6 w-6 rounded-full bg-primary-contrast" />
               </button>
             </Row>
             <div className="mt-3 flex items-center justify-between gap-3">
@@ -144,7 +144,7 @@ export function SettingsPage() {
                   setTime(e.target.value);
                   void saveReminders(enabled, e.target.value);
                 }}
-                className="h-12 rounded-[20px] border border-input bg-surface px-4 text-base text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
+                className="h-12 rounded-[20px] border border-input bg-card px-4 text-base text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
               />
             </div>
             <p className="mt-3 text-[15px] text-foreground">Reminders will start soon.</p>

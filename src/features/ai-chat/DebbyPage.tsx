@@ -207,8 +207,8 @@ function Bubble({
           bubbleText,
           "max-w-[85%] rounded-[20px] rounded-bl-[4px] px-4 py-3 text-foreground",
           item.tone === "safety"
-            ? "border-2 border-primary bg-card"
-            : "border border-border bg-surface",
+            ? "border-2 border-alert-border bg-alert"
+            : "border border-line bg-card",
         )}
       >
         {item.text}

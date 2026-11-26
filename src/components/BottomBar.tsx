@@ -21,10 +21,10 @@ function SideItem({ item }: { item: BarItem }) {
   return (
     <Link
       to={item.to}
-      className="group flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-1 text-foreground"
+      className="group flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-1 text-foreground group-data-[status=active]:text-primary"
     >
       <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={2} aria-hidden />
-      <span className="rounded-2xl px-3 py-1 text-[13px] leading-tight font-medium group-data-[status=active]:bg-card group-data-[status=active]:font-bold">
+      <span className="rounded-2xl px-3 py-1 text-[13px] leading-tight font-medium group-data-[status=active]:bg-primary/12 group-data-[status=active]:font-bold group-data-[status=active]:text-primary">
         {item.label}
       </span>
     </Link>
@@ -36,7 +36,7 @@ export function BottomBar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[430px] border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[430px] border-t border-line bg-card pb-[env(safe-area-inset-bottom)]"
     >
       <div className="flex h-[68px] items-stretch px-3">
         {leftItems.map((item) => (
