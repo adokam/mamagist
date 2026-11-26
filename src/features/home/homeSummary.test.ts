@@ -42,6 +42,11 @@ describe("pregnancy card", () => {
     expect(card.tipWeek).toBe(26);
   });
 
+  it("shows 0 weeks, 3 days when she is only a few days in", () => {
+    const card = homeCard({ ...empty, last_period_date: "2026-11-09" }, today);
+    expect(card.kind === "pregnancy" && weeksAndDays(card.age)).toBe("0 weeks, 3 days");
+  });
+
   it("works out the rest from a due date only", () => {
     const card = homeCard({ ...empty, stage: "pregnant", due_date: "2027-02-14" }, today);
     expect(card.kind === "pregnancy" && weeksAndDays(card.age)).toBe("26 weeks, 4 days");

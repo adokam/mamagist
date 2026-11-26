@@ -126,12 +126,12 @@ export function PregnancyDateForm({
       ) : (
         <>
           <StepProgress current={2} total={3} />
-          <div className="mt-8">
+          <div className="mt-6">
             <PageHeader label="Step 2 of 3" title="When did your last period start?" />
           </div>
         </>
       )}
-      <p className="mt-4 text-[17px] leading-relaxed text-foreground">
+      <p className="mt-4 text-base leading-relaxed text-foreground">
         We use this to find your due date and your week.
       </p>
 
@@ -166,7 +166,7 @@ export function PregnancyDateForm({
           <button
             type="button"
             onClick={() => setMode("period")}
-            className="block min-h-11 px-1 text-[17px] font-bold text-foreground underline underline-offset-4"
+            className="block min-h-11 px-1 text-base font-bold text-foreground underline underline-offset-4"
           >
             I know my last period date
           </button>
@@ -178,17 +178,17 @@ export function PregnancyDateForm({
           <p className="text-[15px] text-foreground">
             {mode === "period" ? "Your due date" : "Estimated first day of your last period"}
           </p>
-          <p className="mt-2 text-[40px] leading-tight font-extrabold tracking-tight text-foreground">
+          <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight text-foreground">
             {formatCalendarDate(mode === "period" ? result.dueDate : result.lastPeriod)}
           </p>
-          <p className="mt-2 text-[17px] text-foreground">{pregnancyAgeSentence(result.age)}</p>
+          <p className="mt-2 text-base text-foreground">{pregnancyAgeSentence(result.age)}</p>
         </PeachCard>
       ) : null}
       {isEdit ? null : (
         <p className="mt-4 text-[15px] text-foreground">You can change this later in your profile.</p>
       )}
 
-      <div className={isEdit ? "space-y-4 pt-8" : "mt-auto space-y-4 pt-8"}>
+      <div className={isEdit ? "space-y-3 pt-6" : "mt-auto space-y-3 pt-6"}>
         <FormError message={saveError} />
         <PrimaryButton
           type="button"

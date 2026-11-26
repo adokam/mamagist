@@ -28,6 +28,13 @@ describe("pregnancy calculator", () => {
     expect(pregnancyAgeSentence(age)).toBe("You are 26 weeks and 4 days pregnant.");
   });
 
+  it("last period 3 days ago is 0 weeks and 3 days", () => {
+    const age = pregnancyAge(d("2026-11-09"), today);
+    expect(age.weeks).toBe(0);
+    expect(age.days).toBe(3);
+    expect(pregnancyAgeSentence(age)).toBe("You are 0 weeks and 3 days pregnant.");
+  });
+
   it("due date 2027-02-14 gives last period 2026-05-10", () => {
     expect(toIsoDate(lastPeriodFromDueDate(d("2027-02-14")))).toBe("2026-05-10");
   });

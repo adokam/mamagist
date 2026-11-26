@@ -16,7 +16,7 @@ export function ChoiceButton({
       role="radio"
       aria-checked={selected}
       className={cn(
-        "flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 px-5 text-[17px] font-bold text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex h-[52px] w-full items-center justify-center gap-2 rounded-full border-2 px-5 text-base font-bold text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         selected ? "border-primary bg-card" : "border-input bg-surface",
         className,
       )}

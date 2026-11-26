@@ -43,11 +43,9 @@ export function validateLastPeriod(
   return null;
 }
 
-/** "You are 26 weeks and 4 days pregnant." */
+/** "You are 26 weeks and 4 days pregnant." — always both parts, even "0 weeks and 3 days". */
 export function pregnancyAgeSentence({ weeks, days }: PregnancyAge): string {
   const w = `${weeks} ${weeks === 1 ? "week" : "weeks"}`;
   const d = `${days} ${days === 1 ? "day" : "days"}`;
-  if (days === 0) return `You are ${w} pregnant.`;
-  if (weeks === 0) return `You are ${d} pregnant.`;
   return `You are ${w} and ${d} pregnant.`;
 }

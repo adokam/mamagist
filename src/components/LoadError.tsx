@@ -4,8 +4,8 @@ import { OutlineButton } from "@/components/Buttons";
 export function LoadError({ onRetry }: { onRetry: () => void }) {
   const offline = typeof navigator !== "undefined" && navigator.onLine === false;
   return (
-    <div role="alert" className="space-y-4 rounded-3xl bg-card p-5 text-card-foreground">
-      <p className="text-[17px] font-semibold">
+    <div role="alert" className="space-y-4 rounded-[20px] bg-card p-4 text-card-foreground">
+      <p className="text-base font-semibold">
         {offline
           ? "You seem to be offline. Check your internet connection and try again."
           : "We couldn't load your page. Please try again."}

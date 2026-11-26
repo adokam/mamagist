@@ -3,13 +3,13 @@ import type { SelectHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Native dropdown styled like TextInput: white, fully rounded, 56px tall. */
+/** Native dropdown styled like TextInput: white, fully rounded, 48px tall. */
 export function SelectInput({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <div className="relative">
       <select
         className={cn(
-          "h-14 w-full appearance-none rounded-full border border-input bg-surface px-5 pr-12 text-[17px] text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "h-12 w-full appearance-none rounded-full border border-input bg-surface px-5 pr-12 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           className,
         )}
         {...props}

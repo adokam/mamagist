@@ -79,7 +79,7 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
     return (
       <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <PageHeader title="Check your email" />
-        <p className="mt-3 text-[17px] leading-relaxed text-foreground">
+        <p className="mt-3 text-base leading-relaxed text-foreground">
           We sent a link to <span className="font-bold">{checkEmailFor}</span>. Open it to confirm
           your account, then log in.
         </p>
@@ -157,7 +157,7 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
               onChange={(e) => setValues((v) => ({ ...v, acceptedTerms: e.target.checked }))}
               className="mt-0.5 h-6 w-6 shrink-0 accent-primary"
             />
-            <label htmlFor="acceptedTerms" className="text-[17px] leading-snug text-foreground">
+            <label htmlFor="acceptedTerms" className="text-base leading-snug text-foreground">
               I accept the{" "}
               <Link to="/terms" className={linkClass}>
                 Terms of Use
@@ -187,7 +187,7 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
               "Continue"
             )}
           </PrimaryButton>
-          <p className="text-center text-[17px] text-foreground">
+          <p className="text-center text-base text-foreground">
             Already have an account?{" "}
             <Link to="/login" className={linkClass}>
               Log in
