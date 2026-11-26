@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
+import { Loader2, Lock, Mail } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
-import { AuthLogoMark, AuthWarmLine } from "@/features/auth/AuthIntro";
+import { AuthHero, AuthSheet, AuthSwitch } from "@/features/auth/AuthHero";
 import { PageHeader } from "@/components/PageHeader";
 import { TextInput } from "@/components/TextInput";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,72 +51,76 @@ export function LoginPage() {
   }
 
   return (
-    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))] bg-[linear-gradient(180deg,var(--background),var(--card))]">
-      <AuthLogoMark />
-      <div className="mt-4">
-        <PageHeader title="Welcome back" />
-      </div>
-      <AuthWarmLine />
-
-      <form noValidate onSubmit={onSubmit} className="mt-8 flex flex-1 flex-col">
-        <div className="space-y-5">
-          <FormField id="email" label="Email" error={show("email")}>
-            <TextInput
-              id="email"
-              name="email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              autoCapitalize="none"
-              spellCheck={false}
-              maxLength={255}
-              value={values.email}
-              onChange={(e) => setValues((v) => ({ ...v, email: e.target.value }))}
-              onBlur={touch("email")}
-              aria-invalid={Boolean(show("email"))}
-              aria-describedby={show("email") ? "email-error" : undefined}
-            />
-          </FormField>
-
-          <FormField id="password" label="Password" error={show("password")}>
-            <PasswordInput
-              id="password"
-              name="password"
-              autoComplete="current-password"
-              value={values.password}
-              onChange={(e) => setValues((v) => ({ ...v, password: e.target.value }))}
-              onBlur={touch("password")}
-              aria-invalid={Boolean(show("password"))}
-              aria-describedby={show("password") ? "password-error" : undefined}
-            />
-          </FormField>
+    <main className="flex min-h-dvh flex-col bg-background">
+      <AuthHero />
+      <AuthSheet>
+        <AuthSwitch active="login" />
+        <div className="mt-6">
+          <PageHeader title="Welcome back" />
         </div>
 
-        <div className="mt-auto space-y-4 pt-8">
-          <FormError message={formError} />
-          <PrimaryButton type="submit" disabled={submitting} aria-busy={submitting}>
-            {submitting ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden />
-                Logging in…
-              </>
-            ) : (
-              "Log in"
-            )}
-          </PrimaryButton>
-          <p className="text-center text-base text-foreground">
-            <Link to="/forgot-password" className="font-bold underline underline-offset-4">
-              Forgot password?
-            </Link>
-          </p>
-          <p className="text-center text-base text-foreground">
-            New here?{" "}
-            <Link to="/signup" className="font-bold underline underline-offset-4">
-              Create an account
-            </Link>
-          </p>
-        </div>
-      </form>
+        <form noValidate onSubmit={onSubmit} className="mt-6 flex flex-1 flex-col">
+          <div className="space-y-5">
+            <FormField id="email" label="Email" error={show("email")}>
+              <TextInput
+                id="email"
+                name="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                autoCapitalize="none"
+                spellCheck={false}
+                maxLength={255}
+                icon={<Mail className="h-5 w-5" aria-hidden />}
+                value={values.email}
+                onChange={(e) => setValues((v) => ({ ...v, email: e.target.value }))}
+                onBlur={touch("email")}
+                aria-invalid={Boolean(show("email"))}
+                aria-describedby={show("email") ? "email-error" : undefined}
+              />
+            </FormField>
+
+            <FormField id="password" label="Password" error={show("password")}>
+              <PasswordInput
+                id="password"
+                name="password"
+                autoComplete="current-password"
+                icon={<Lock className="h-5 w-5" aria-hidden />}
+                value={values.password}
+                onChange={(e) => setValues((v) => ({ ...v, password: e.target.value }))}
+                onBlur={touch("password")}
+                aria-invalid={Boolean(show("password"))}
+                aria-describedby={show("password") ? "password-error" : undefined}
+              />
+              <div className="mt-2 text-right">
+                <Link to="/forgot-password" className="font-bold text-primary">
+                  Forgot password?
+                </Link>
+              </div>
+            </FormField>
+          </div>
+
+          <div className="mt-auto space-y-4 pt-8">
+            <FormError message={formError} />
+            <PrimaryButton type="submit" disabled={submitting} aria-busy={submitting}>
+              {submitting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden />
+                  Logging in…
+                </>
+              ) : (
+                "Log in"
+              )}
+            </PrimaryButton>
+            <p className="text-center text-base text-foreground">
+              New here?{" "}
+              <Link to="/signup" className="font-bold underline underline-offset-4">
+                Create an account
+              </Link>
+            </p>
+          </div>
+        </form>
+      </AuthSheet>
     </main>
   );
 }

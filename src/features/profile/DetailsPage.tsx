@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { OutlineButton, PrimaryButton } from "@/components/Buttons";
+import { AuthHero, AuthSheet } from "@/features/auth/AuthHero";
 import { ChoiceButton } from "@/components/ChoiceButton";
 import { DateInput } from "@/components/DateInput";
 import { PageHeader } from "@/components/PageHeader";
@@ -84,11 +85,13 @@ export function DetailsPage() {
   }
 
   return (
-    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]">
-      <StepProgress current={3} total={3} />
-      <div className="mt-8">
-        <PageHeader label="Step 3 of 3" title="Tell us a little about you" />
-      </div>
+    <main className="flex min-h-dvh flex-col bg-background">
+      <AuthHero />
+      <AuthSheet>
+        <StepProgress current={3} total={3} />
+        <div className="mt-4">
+          <PageHeader label="Step 3 of 3" title="Tell us a little about you" />
+        </div>
       <p className="mt-4 text-base leading-relaxed text-foreground">
         This is optional. You can change it later.
       </p>
@@ -178,6 +181,7 @@ export function DetailsPage() {
           Skip for now
         </OutlineButton>
       </div>
+      </AuthSheet>
     </main>
   );
 }

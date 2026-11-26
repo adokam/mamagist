@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { OutlineButton, PrimaryButton } from "@/components/Buttons";
+import { AuthHero, AuthSheet } from "@/features/auth/AuthHero";
 import { SurfaceCard } from "@/components/Cards";
 import { DateInput } from "@/components/DateInput";
 import { PageHeader } from "@/components/PageHeader";
@@ -113,20 +114,14 @@ export function PregnancyDateForm({
     }
   }
 
-  return (
-    <main
-      className={
-        isEdit
-          ? "page-shell flex flex-col"
-          : "page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))]"
-      }
-    >
+  const body = (
+    <>
       {isEdit ? (
         <PageHeader title="When did your last period start?" />
       ) : (
         <>
           <StepProgress current={2} total={3} />
-          <div className="mt-6">
+          <div className="mt-4">
             <PageHeader label="Step 2 of 3" title="When did your last period start?" />
           </div>
         </>
@@ -215,6 +210,19 @@ export function PregnancyDateForm({
           {isEdit ? "Cancel" : "Skip for now"}
         </OutlineButton>
       </div>
+    </>
+  );
+
+  return (
+    <main className={isEdit ? "page-shell flex flex-col" : "flex min-h-dvh flex-col bg-background"}>
+      {isEdit ? (
+        body
+      ) : (
+        <>
+          <AuthHero />
+          <AuthSheet>{body}</AuthSheet>
+        </>
+      )}
     </main>
   );
 }

@@ -1,19 +1,21 @@
 import { Eye, EyeOff } from "lucide-react";
-import { useState, type InputHTMLAttributes } from "react";
+import { useState, type InputHTMLAttributes, type ReactNode } from "react";
 
 import { TextInput } from "@/components/TextInput";
 import { cn } from "@/lib/utils";
 
 /** Shared text input with a show / hide toggle on the right. */
 export function PasswordInput({
+  icon,
   className,
   ...props
-}: Omit<InputHTMLAttributes<HTMLInputElement>, "type">) {
+}: Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & { icon?: ReactNode }) {
   const [visible, setVisible] = useState(false);
   return (
     <div className="relative">
       <TextInput
         {...props}
+        icon={icon}
         type={visible ? "text" : "password"}
         className={cn("pr-14", className)}
       />

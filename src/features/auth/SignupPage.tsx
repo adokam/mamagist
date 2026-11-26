@@ -1,11 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
+import { Loader2, Lock, Mail, User } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
-import { AuthLogoMark, AuthWarmLine } from "@/features/auth/AuthIntro";
+import { AuthHero, AuthSheet, AuthSwitch } from "@/features/auth/AuthHero";
 import { PageHeader } from "@/components/PageHeader";
-import { StepProgress } from "@/components/StepProgress";
 import { TextInput } from "@/components/TextInput";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -78,42 +77,42 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
 
   if (checkEmailFor) {
     return (
-      <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))] bg-[linear-gradient(180deg,var(--background),var(--card))]">
-        <AuthLogoMark />
-        <div className="mt-4">
-          <PageHeader title="Check your email" />
-        </div>
-        <AuthWarmLine />
-        <p className="mt-3 text-base leading-relaxed text-foreground">
-          We sent a link to <span className="font-bold">{checkEmailFor}</span>. Open it to confirm
-          your account, then log in.
-        </p>
-        <div className="mt-auto pt-8">
-          <PrimaryButton type="button" onClick={() => void navigate({ to: "/login" })}>
-            Go to log in
-          </PrimaryButton>
-        </div>
+      <main className="flex min-h-dvh flex-col bg-background">
+        <AuthHero />
+        <AuthSheet>
+          <div className="mt-1">
+            <PageHeader title="Check your email" />
+          </div>
+          <p className="mt-3 text-base leading-relaxed text-foreground">
+            We sent a link to <span className="font-bold">{checkEmailFor}</span>. Open it to
+            confirm your account, then log in.
+          </p>
+          <div className="mt-auto pt-8">
+            <PrimaryButton type="button" onClick={() => void navigate({ to: "/login" })}>
+              Go to log in
+            </PrimaryButton>
+          </div>
+        </AuthSheet>
       </main>
     );
   }
 
   return (
-    <main className="page-shell flex min-h-dvh flex-col pb-[calc(2rem+env(safe-area-inset-bottom))] bg-[linear-gradient(180deg,var(--background),var(--card))]">
-      <StepProgress current={1} total={3} />
-      <div className="mt-8">
-        <AuthLogoMark />
-      </div>
-      <div className="mt-4">
-        <PageHeader label="Step 1 of 3" title="Create your account" />
-      </div>
-      <AuthWarmLine />
+    <main className="flex min-h-dvh flex-col bg-background">
+      <AuthHero />
+      <AuthSheet>
+        <AuthSwitch active="signup" />
+        <div className="mt-6">
+          <PageHeader label="Step 1 of 3" title="Create your account" />
+        </div>
 
-      <form noValidate onSubmit={onSubmit} className="mt-8 flex flex-1 flex-col">
+        <form noValidate onSubmit={onSubmit} className="mt-6 flex flex-1 flex-col">
         <div className="space-y-5">
           <FormField id="fullName" label="Full name" error={show("fullName")}>
             <TextInput
               id="fullName"
               name="fullName"
+              icon={<User className="h-5 w-5" aria-hidden />}
               autoComplete="name"
               autoCapitalize="words"
               maxLength={120}
@@ -131,6 +130,7 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
               name="email"
               type="email"
               inputMode="email"
+              icon={<Mail className="h-5 w-5" aria-hidden />}
               autoComplete="email"
               autoCapitalize="none"
               spellCheck={false}
@@ -147,6 +147,7 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
             <PasswordInput
               id="password"
               name="password"
+              icon={<Lock className="h-5 w-5" aria-hidden />}
               autoComplete="new-password"
               placeholder="At least 8 characters"
               value={values.password}
@@ -203,7 +204,8 @@ export function SignupPage({ onSigningUp }: { onSigningUp?: (value: boolean) => 
             </Link>
           </p>
         </div>
-      </form>
+        </form>
+      </AuthSheet>
     </main>
   );
 }
