@@ -153,3 +153,7 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 ## Forgot password
 - Login has a "Forgot password?" link to /forgot-password. She enters her email; Supabase sends a reset link to `<site>/reset-password` (built from `window.location.origin` at runtime, so no domain is hard-coded). The screen always shows the same message, whether or not the email has an account.
 - /reset-password reads the recovery session from the reset link, asks for a new password of at least 8 characters, saves it with Supabase, signs her out of the recovery session and sends her to /login. An expired or used link shows a friendly message with a link to ask for a new one. The redirect address `<site>/reset-password` must be allowlisted in Supabase Auth > URL Configuration > Redirect URLs.
+
+## Community
+- `/community` (CommunityPage, from docs/design/community.jpg): title, a peach card "Community is coming soon" with the Notify me button inside, and "We will tell you the day it opens." underneath.
+- Notify me inserts one row into notify_list (user_id, topic "community"). The table has a unique (user_id, topic) rule and RLS that only lets her insert her own rows, so a second tap cannot make a duplicate — it is treated as already on the list. After it works the button reads "You are on the list" and stays that way on later visits (her row is read on load).
