@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { loginSchema, signupSchema } from "./validation";
+import { forgotPasswordSchema, loginSchema, resetPasswordSchema, signupSchema } from "./validation";
 
 const good = {
   fullName: "Ada Obi",
@@ -32,6 +32,18 @@ describe("signup validation", () => {
   });
   it("needs the terms box ticked", () => {
     expect(signupSchema.safeParse({ ...good, acceptedTerms: false }).success).toBe(false);
+  });
+});
+
+describe("forgot and reset password", () => {
+  it("accepts a valid email for a reset link", () => {
+    expect(forgotPasswordSchema.safeParse({ email: "ada@example.com" }).success).toBe(true);
+    expect(forgotPasswordSchema.safeParse({ email: "not-an-email" }).success).toBe(false);
+  });
+
+  it("needs a new password of at least 8 characters", () => {
+    expect(resetPasswordSchema.safeParse({ password: "short" }).success).toBe(false);
+    expect(resetPasswordSchema.safeParse({ password: "long-enough" }).success).toBe(true);
   });
 });
 

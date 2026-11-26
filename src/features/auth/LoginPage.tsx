@@ -100,6 +100,11 @@ export function LoginPage() {
             )}
           </PrimaryButton>
           <p className="text-center text-base text-foreground">
+            <Link to="/forgot-password" className="font-bold underline underline-offset-4">
+              Forgot password?
+            </Link>
+          </p>
+          <p className="text-center text-base text-foreground">
             New here?{" "}
             <Link to="/signup" className="font-bold underline underline-offset-4">
               Create an account

@@ -31,8 +31,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Please enter your password."),
 });
 
+/** Forgot password: email only. */
+export const forgotPasswordSchema = z.object({ email });
+
+/** Reset password: a new password of at least 8 characters. */
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(PASSWORD_MIN, `Your password needs at least ${PASSWORD_MIN} characters.`),
+});
+
 export type SignupValues = z.input<typeof signupSchema>;
 export type LoginValues = z.input<typeof loginSchema>;
+export type ForgotPasswordValues = z.input<typeof forgotPasswordSchema>;
+export type ResetPasswordValues = z.input<typeof resetPasswordSchema>;
 
 /** First error message per field, or an empty object when everything is valid. */
 export function fieldErrors(error: z.ZodError | undefined): Record<string, string | undefined> {

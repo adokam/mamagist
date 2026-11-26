@@ -149,3 +149,7 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 
 ## Profile
 - `/profile` (ProfilePage): her name, her week and due date with an "Edit date" button to /pregnancy-date, and her stage, state, first baby answer and baby birth date when they exist. "Edit details" opens a form for full name, stage, first baby, state and baby birth date; it saves to her own private_profiles row with the same rules as signup step 3 (`detailsUpdate` in `src/features/profile/details.ts`, birth date never in the future) and shows friendly errors. A row links to /settings. Log out lives in Settings, not on Profile.
+
+## Forgot password
+- Login has a "Forgot password?" link to /forgot-password. She enters her email; Supabase sends a reset link to `<site>/reset-password` (built from `window.location.origin` at runtime, so no domain is hard-coded). The screen always shows the same message, whether or not the email has an account.
+- /reset-password reads the recovery session from the reset link, asks for a new password of at least 8 characters, saves it with Supabase, signs her out of the recovery session and sends her to /login. An expired or used link shows a friendly message with a link to ask for a new one. The redirect address `<site>/reset-password` must be allowlisted in Supabase Auth > URL Configuration > Redirect URLs.
