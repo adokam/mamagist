@@ -14,12 +14,21 @@ import { LogoMark } from "@/components/Logo";
 import { useAuth } from "@/features/auth/AuthProvider";
 
 import { fetchFeedPosts, fetchOwnFirstName } from "./communityApi";
+import { COMMUNITY_ENABLED } from "./communityEnabled";
 import { CommunityMenu } from "./CommunityMenu";
 import { authorDisplayName, firstName } from "./displayName";
 import { isMissingTablesError, MISSING_TABLES_MESSAGE } from "./missingTables";
+import { NotifyMePage } from "./NotifyMePage";
 import { AuthorAvatar, PostCard } from "./PostCard";
 
+/** While the community is paused, /community shows the Notify me waiting
+    list. Set COMMUNITY_ENABLED to true to bring the feed back. */
 export function CommunityPage() {
+  if (!COMMUNITY_ENABLED) return <NotifyMePage />;
+  return <CommunityFeed />;
+}
+
+function CommunityFeed() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const navigate = useNavigate();

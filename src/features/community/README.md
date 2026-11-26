@@ -1,4 +1,9 @@
 # community
+The community is PAUSED for now: /community shows the Notify me waiting
+list, and the groups list, group pages and Create post page show it too.
+Everything is kept behind the flag in `communityEnabled.ts` — set
+`COMMUNITY_ENABLED` to `true` there to bring the feed back.
+
 Phase 2 community for pregnant women. The foundation is the migration
 `20261126090000`: groups, group members, posts, likes, comments, reports,
 and the `community-images` photo bucket, all with row level security.

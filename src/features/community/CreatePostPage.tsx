@@ -16,11 +16,20 @@ import { friendlySaveError } from "@/features/profile/saveError";
 
 import { AuthorAvatar } from "./PostCard";
 import { createPost, fetchOwnFirstName, uploadPostPhoto } from "./communityApi";
+import { COMMUNITY_ENABLED } from "./communityEnabled";
 import { firstName } from "./displayName";
 import { isMissingTablesError, MISSING_TABLES_MESSAGE } from "./missingTables";
+import { NotifyMePage } from "./NotifyMePage";
 import { canPost, isAllowedPhoto, MAX_POST_LENGTH } from "./postValidation";
 
+/** While the community is paused, the Create post page shows the Notify me
+    waiting list. Set COMMUNITY_ENABLED to true to bring posting back. */
 export function CreatePostPage({ groupId }: { groupId: string | null }) {
+  if (!COMMUNITY_ENABLED) return <NotifyMePage />;
+  return <CreatePostPageContent groupId={groupId} />;
+}
+
+function CreatePostPageContent({ groupId }: { groupId: string | null }) {
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const navigate = useNavigate();

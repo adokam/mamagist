@@ -24,10 +24,19 @@ import {
   removeGroupMember,
 } from "./communityApi";
 import { authorDisplayName } from "./displayName";
+import { COMMUNITY_ENABLED } from "./communityEnabled";
 import { isMissingTablesError, MISSING_TABLES_MESSAGE } from "./missingTables";
+import { NotifyMePage } from "./NotifyMePage";
 import { AuthorAvatar, PostCard } from "./PostCard";
 
+/** While the community is paused, a group page shows the Notify me waiting
+    list. Set COMMUNITY_ENABLED to true to bring groups back. */
 export function GroupPage({ groupId }: { groupId: string }) {
+  if (!COMMUNITY_ENABLED) return <NotifyMePage />;
+  return <GroupPageContent groupId={groupId} />;
+}
+
+function GroupPageContent({ groupId }: { groupId: string }) {
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const navigate = useNavigate();

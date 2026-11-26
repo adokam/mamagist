@@ -20,8 +20,17 @@ import {
   type CommunityGroupRow,
 } from "./communityApi";
 import { groupsListInitialState } from "./groupsListState";
+import { COMMUNITY_ENABLED } from "./communityEnabled";
+import { NotifyMePage } from "./NotifyMePage";
 
+/** While the community is paused, the groups list shows the Notify me
+    waiting list. Set COMMUNITY_ENABLED to true to bring groups back. */
 export function GroupsList() {
+  if (!COMMUNITY_ENABLED) return <NotifyMePage />;
+  return <GroupsListContent />;
+}
+
+function GroupsListContent() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const navigate = useNavigate();
