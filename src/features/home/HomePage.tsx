@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { PrimaryButton } from "@/components/Buttons";
@@ -71,7 +71,7 @@ export function HomePage() {
     <main className="page-shell">
       {failed ? (
         <div className="space-y-6">
-          <PageHeader label="Mamagist" title={greeting(now.getHours(), null)} />
+          <HomeHeader hours={now.getHours()} name={null} />
           <LoadError
             onRetry={() => {
               if (profile.isError) void profile.refetch();
@@ -83,31 +83,42 @@ export function HomePage() {
         <HomeSkeleton />
       ) : (
         <div className="space-y-3">
-          <div className="mb-4">
-            <PageHeader
-              label="Mamagist"
-              title={greeting(now.getHours(), profile.data?.full_name ?? null)}
-            />
-          </div>
+          <HomeHeader hours={now.getHours()} name={profile.data?.full_name ?? null} />
           <StageCard card={card} />
           <ChecklistCard />
           <AskDebbyCard />
           <InstallCard />
           {card.kind === "pregnancy" && tip.data ? (
-            <LineCard>
+            <SurfaceCard>
               <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
               <p className="mt-2 text-base leading-relaxed text-foreground">{tip.data}</p>
-            </LineCard>
+            </SurfaceCard>
           ) : card.kind === "pregnancy" && tip.isError && savedTip ? (
-            <LineCard>
+            <SurfaceCard>
               <p className="text-[15px] font-semibold text-foreground">Tip of the week</p>
               <p className="mt-2 text-base leading-relaxed text-foreground">{savedTip}</p>
               <p className="mt-2 text-[15px] text-foreground">Saved from your last visit.</p>
-            </LineCard>
+            </SurfaceCard>
           ) : null}
         </div>
       )}
     </main>
+  );
+}
+
+/** Bold greeting with a small round settings button at the top right. */
+function HomeHeader({ hours, name }: { hours: number; name: string | null }) {
+  return (
+    <div className="mb-4 flex items-start justify-between gap-3">
+      <PageHeader label="Mamagist" title={greeting(hours, name)} />
+      <Link
+        to="/settings"
+        aria-label="Settings"
+        className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-card text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
+        <Settings className="h-5 w-5" aria-hidden />
+      </Link>
+    </div>
   );
 }
 
@@ -167,21 +178,21 @@ function StageCard({ card }: { card: HomeCard }) {
   }
 
   return (
-    <SurfaceCard>
-      <p className="text-[15px] font-semibold text-foreground">Your pregnancy</p>
-      <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight text-foreground">
+    <div className="rounded-[20px] bg-gradient-to-br from-primary to-primary-dark p-4 text-primary-contrast">
+      <p className="text-[15px] font-semibold">Your pregnancy</p>
+      <p className="mt-2 text-[32px] leading-tight font-extrabold tracking-tight">
         {weeksAndDays(card.age)}
       </p>
-      <p className="mt-1 text-base text-foreground">
+      <p className="mt-1 text-base">
         {trimesterName(card.age.trimester)} · Due {formatCalendarDate(card.dueDate)}
       </p>
-      <ProgressBar value={card.progress} className="mt-3" />
+      <ProgressBar value={card.progress} variant="onPrimary" className="mt-3" />
       {card.pastFortyTwoWeeks ? (
-        <p className="mt-4 text-base font-semibold text-foreground">
+        <p className="mt-4 text-base font-semibold">
           Please talk to your clinic about your next steps.
         </p>
       ) : null}
-    </SurfaceCard>
+    </div>
   );
 }
 
@@ -223,14 +234,14 @@ function ChecklistCard() {
 
 function AskDebbyCard() {
   return (
-    <div className="rounded-[20px] bg-primary p-4 text-primary-contrast">
+    <div className="rounded-[20px] bg-accent p-4 text-ink">
       <h2 className="text-[20px] leading-tight font-extrabold">Ask Debby</h2>
       <p className="mt-2 text-base leading-relaxed">
         Tell Debby how you feel today and get advice for your week.
       </p>
       <Link
         to="/debby"
-        className="mt-4 inline-flex h-[52px] items-center justify-center rounded-full bg-card px-6 text-base font-bold text-card-foreground hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className="mt-4 inline-flex h-[52px] items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         Start chat
       </Link>

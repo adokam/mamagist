@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { LineCard } from "@/components/Cards";
+import { SurfaceCard } from "@/components/Cards";
 
 import { useInstallPrompt } from "./useInstallPrompt";
 
@@ -9,7 +9,7 @@ export function InstallCard() {
   const { installed, dismissed, dismiss } = useInstallPrompt();
   if (installed || dismissed) return null;
   return (
-    <LineCard>
+    <SurfaceCard>
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h2 className="text-[20px] leading-tight font-extrabold text-foreground">
@@ -34,6 +34,6 @@ export function InstallCard() {
           ✕
         </button>
       </div>
-    </LineCard>
+    </SurfaceCard>
   );
 }
