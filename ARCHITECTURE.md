@@ -140,3 +140,9 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 - The service worker `public/sw.js` is registered in `src/routes/__root.tsx`. It caches only the app shell (offline page and icon) and same-origin static files. It never caches Supabase auth, debby-chat, chat messages, dates, names or health data. Failed page visits show `public/offline.html`.
 - `/install` (InstallPage) explains Android (browser install prompt) and iPhone (Share > Add to Home Screen, iOS 16.4 or newer, Safari). Home shows a small dismissible InstallCard that links to it and hides when the app is already installed (`src/features/pwa/useInstallPrompt.ts`).
 - Offline content: only generic daily task titles and the weekly tip text are kept in localStorage (`src/features/pwa/offlineCache.ts`), so Daily and Home can show what was last loaded when there is no internet.
+
+## Settings
+- `/settings` (SettingsPage, under the bottom bar). Rows: Dark mode, Daily reminders, Reminder time, Language, Install the app, Privacy policy, Terms of use, Log out.
+- Dark mode (`src/features/settings/darkMode.ts`): saved on the device in localStorage as light, dark or system; system follows the phone setting and is the default. The `.dark` class on `<html>` switches the tokens in `src/styles.css`; `initTheme` runs once in `src/routes/__root.tsx`.
+- Reminders save `reminders_enabled` and `reminder_time` to her own private_profiles row only. The screen says "Reminders will start soon." — sending is built later.
+- Language shows English with the note "Debby answers in the language you write."

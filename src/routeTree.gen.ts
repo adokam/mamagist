@@ -23,6 +23,7 @@ import { Route as TabsDebbyRouteImport } from './routes/_tabs.debby'
 import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
 import { Route as TabsPregnancyDateRouteImport } from './routes/_tabs.pregnancy-date'
 import { Route as TabsProfileRouteImport } from './routes/_tabs.profile'
+import { Route as TabsSettingsRouteImport } from './routes/_tabs.settings'
 import { Route as SignupDetailsRouteImport } from './routes/signup_.details'
 import { Route as SignupPeriodRouteImport } from './routes/signup_.period'
 
@@ -95,6 +96,11 @@ const TabsProfileRoute = TabsProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => TabsRoute,
 } as any)
+const TabsSettingsRoute = TabsSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => TabsRoute,
+} as any)
 const SignupDetailsRoute = SignupDetailsRouteImport.update({
   id: '/signup_/details',
   path: '/signup/details',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof TabsHomeRoute
   '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
+  '/settings': typeof TabsSettingsRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
 }
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/home': typeof TabsHomeRoute
   '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
+  '/settings': typeof TabsSettingsRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
 }
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/_tabs/home': typeof TabsHomeRoute
   '/_tabs/pregnancy-date': typeof TabsPregnancyDateRoute
   '/_tabs/profile': typeof TabsProfileRoute
+  '/_tabs/settings': typeof TabsSettingsRoute
   '/signup_/details': typeof SignupDetailsRoute
   '/signup_/period': typeof SignupPeriodRoute
 }
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/pregnancy-date'
     | '/profile'
+    | '/settings'
     | '/signup/details'
     | '/signup/period'
   fileRoutesByTo: FileRoutesByTo
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/pregnancy-date'
     | '/profile'
+    | '/settings'
     | '/signup/details'
     | '/signup/period'
   id:
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/_tabs/home'
     | '/_tabs/pregnancy-date'
     | '/_tabs/profile'
+    | '/_tabs/settings'
     | '/signup_/details'
     | '/signup_/period'
   fileRoutesById: FileRoutesById
@@ -327,6 +339,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsProfileRouteImport
       parentRoute: typeof TabsRoute
     }
+    '/_tabs/settings': {
+      id: '/_tabs/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof TabsSettingsRouteImport
+      parentRoute: typeof TabsRoute
+    }
     '/signup_/details': {
       id: '/signup_/details'
       path: '/signup/details'
@@ -351,6 +370,7 @@ interface TabsRouteChildren {
   TabsHomeRoute: typeof TabsHomeRoute
   TabsPregnancyDateRoute: typeof TabsPregnancyDateRoute
   TabsProfileRoute: typeof TabsProfileRoute
+  TabsSettingsRoute: typeof TabsSettingsRoute
 }
 
 const TabsRouteChildren: TabsRouteChildren = {
@@ -360,6 +380,7 @@ const TabsRouteChildren: TabsRouteChildren = {
   TabsHomeRoute: TabsHomeRoute,
   TabsPregnancyDateRoute: TabsPregnancyDateRoute,
   TabsProfileRoute: TabsProfileRoute,
+  TabsSettingsRoute: TabsSettingsRoute,
 }
 
 const TabsRouteWithChildren = TabsRoute._addFileChildren(TabsRouteChildren)

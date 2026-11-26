@@ -1,26 +1,21 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 
-import { OutlineButton } from "@/components/Buttons";
+import { WhiteCard } from "@/components/Cards";
 import { PlaceholderPage } from "@/components/PlaceholderPage";
-import { useAuth } from "@/features/auth/AuthProvider";
 
+/** Placeholder profile. Task 4 replaces this with the real screen. Log out lives in Settings. */
 export function ProfilePage() {
-  const { signOut } = useAuth();
-  const navigate = useNavigate();
-
-  async function onLogOut() {
-    await signOut();
-    await navigate({ to: "/login", replace: true });
-  }
-
   return (
     <>
       <PlaceholderPage title="Profile" />
-      {/* Temporary. Settings will replace this button later. */}
-      <div className="mt-8 px-6">
-        <OutlineButton type="button" onClick={() => void onLogOut()}>
-          Log out
-        </OutlineButton>
+      <div className="mt-4 px-5">
+        <Link to="/settings" className="block rounded-[20px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+          <WhiteCard className="flex items-center justify-between gap-3">
+            <span className="text-base font-bold text-foreground">Settings</span>
+            <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
+          </WhiteCard>
+        </Link>
       </div>
     </>
   );

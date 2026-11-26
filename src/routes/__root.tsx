@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { AuthProvider } from "@/features/auth/AuthProvider";
+import { initTheme } from "@/features/settings/darkMode";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -139,6 +140,11 @@ function RootComponent() {
 
   // Register the service worker once, in the browser only. It caches the app
   // shell and shows the offline page; it never caches health data or Supabase.
+  useEffect(() => {
+    const stopTheme = initTheme();
+    return stopTheme;
+  }, []);
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       void navigator.serviceWorker.register("/sw.js").catch(() => {
