@@ -11,6 +11,13 @@ import type {
 } from "./communityClient";
 import { supabase } from "@/integrations/supabase/client";
 
+export type {
+  CommunityCommentRow,
+  CommunityGroupMemberRow,
+  CommunityGroupRow,
+  CommunityPostRow,
+} from "./communityClient";
+
 export type FeedPost = CommunityPostRow & {
   /** Public display name from profiles, or null when none is saved yet. */
   authorName: string | null;
@@ -226,6 +233,26 @@ export async function reportPost(postId: string, authorId: string, userId: strin
     created_by: userId,
   });
   if (error) throw error;
+}
+
+/** One group, by id. */
+export async function fetchGroup(groupId: string): Promise<CommunityGroupRow | null> {
+  const { data, error } = await communitySupabase
+    .from("community_groups")
+    .select("id, name, description, created_by, created_at")
+    .eq("id", groupId)
+    .maybeSingle();
+  if (error) throw error;
+  return data ?? null;
+}
+
+/** Every membership row, for member counts on the groups list. */
+export async function fetchAllGroupMembers(): Promise<CommunityGroupMemberRow[]> {
+  const { data, error } = await communitySupabase
+    .from("community_group_members")
+    .select("id, group_id, user_id, role, joined_at");
+  if (error) throw error;
+  return data ?? [];
 }
 
 /** All groups, newest first. */

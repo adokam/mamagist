@@ -28,6 +28,8 @@ import { Route as TabsProfileRouteImport } from './routes/_tabs.profile'
 import { Route as TabsSettingsRouteImport } from './routes/_tabs.settings'
 import { Route as SignupDetailsRouteImport } from './routes/signup_.details'
 import { Route as SignupPeriodRouteImport } from './routes/signup_.period'
+import { Route as TabsCommunityGroupsRouteImport } from './routes/_tabs.community.groups'
+import { Route as TabsCommunityGroupsGroupIdRouteImport } from './routes/_tabs.community.groups.$groupId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -123,6 +125,17 @@ const SignupPeriodRoute = SignupPeriodRouteImport.update({
   path: '/signup/period',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TabsCommunityGroupsRoute = TabsCommunityGroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
+  getParentRoute: () => TabsCommunityRoute,
+} as any)
+const TabsCommunityGroupsGroupIdRoute =
+  TabsCommunityGroupsGroupIdRouteImport.update({
+    id: '/$groupId',
+    path: '/$groupId',
+    getParentRoute: () => TabsCommunityGroupsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -134,7 +147,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/community': typeof TabsCommunityRoute
+  '/community': typeof TabsCommunityRouteWithChildren
   '/daily': typeof TabsDailyRoute
   '/debby': typeof TabsDebbyRoute
   '/home': typeof TabsHomeRoute
@@ -143,6 +156,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof TabsSettingsRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
+  '/community/groups': typeof TabsCommunityGroupsRouteWithChildren
+  '/community/groups/$groupId': typeof TabsCommunityGroupsGroupIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -154,7 +169,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/community': typeof TabsCommunityRoute
+  '/community': typeof TabsCommunityRouteWithChildren
   '/daily': typeof TabsDailyRoute
   '/debby': typeof TabsDebbyRoute
   '/home': typeof TabsHomeRoute
@@ -163,6 +178,8 @@ export interface FileRoutesByTo {
   '/settings': typeof TabsSettingsRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
+  '/community/groups': typeof TabsCommunityGroupsRouteWithChildren
+  '/community/groups/$groupId': typeof TabsCommunityGroupsGroupIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -176,7 +193,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
-  '/_tabs/community': typeof TabsCommunityRoute
+  '/_tabs/community': typeof TabsCommunityRouteWithChildren
   '/_tabs/daily': typeof TabsDailyRoute
   '/_tabs/debby': typeof TabsDebbyRoute
   '/_tabs/home': typeof TabsHomeRoute
@@ -185,6 +202,8 @@ export interface FileRoutesById {
   '/_tabs/settings': typeof TabsSettingsRoute
   '/signup_/details': typeof SignupDetailsRoute
   '/signup_/period': typeof SignupPeriodRoute
+  '/_tabs/community/groups': typeof TabsCommunityGroupsRouteWithChildren
+  '/_tabs/community/groups/$groupId': typeof TabsCommunityGroupsGroupIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -207,6 +226,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup/details'
     | '/signup/period'
+    | '/community/groups'
+    | '/community/groups/$groupId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -227,6 +248,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup/details'
     | '/signup/period'
+    | '/community/groups'
+    | '/community/groups/$groupId'
   id:
     | '__root__'
     | '/'
@@ -248,6 +271,8 @@ export interface FileRouteTypes {
     | '/_tabs/settings'
     | '/signup_/details'
     | '/signup_/period'
+    | '/_tabs/community/groups'
+    | '/_tabs/community/groups/$groupId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -400,11 +425,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupPeriodRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_tabs/community/groups': {
+      id: '/_tabs/community/groups'
+      path: '/groups'
+      fullPath: '/community/groups'
+      preLoaderRoute: typeof TabsCommunityGroupsRouteImport
+      parentRoute: typeof TabsCommunityRoute
+    }
+    '/_tabs/community/groups/$groupId': {
+      id: '/_tabs/community/groups/$groupId'
+      path: '/$groupId'
+      fullPath: '/community/groups/$groupId'
+      preLoaderRoute: typeof TabsCommunityGroupsGroupIdRouteImport
+      parentRoute: typeof TabsCommunityGroupsRoute
+    }
   }
 }
 
+interface TabsCommunityGroupsRouteChildren {
+  TabsCommunityGroupsGroupIdRoute: typeof TabsCommunityGroupsGroupIdRoute
+}
+
+const TabsCommunityGroupsRouteChildren: TabsCommunityGroupsRouteChildren = {
+  TabsCommunityGroupsGroupIdRoute: TabsCommunityGroupsGroupIdRoute,
+}
+
+const TabsCommunityGroupsRouteWithChildren =
+  TabsCommunityGroupsRoute._addFileChildren(TabsCommunityGroupsRouteChildren)
+
+interface TabsCommunityRouteChildren {
+  TabsCommunityGroupsRoute: typeof TabsCommunityGroupsRouteWithChildren
+}
+
+const TabsCommunityRouteChildren: TabsCommunityRouteChildren = {
+  TabsCommunityGroupsRoute: TabsCommunityGroupsRouteWithChildren,
+}
+
+const TabsCommunityRouteWithChildren = TabsCommunityRoute._addFileChildren(
+  TabsCommunityRouteChildren,
+)
+
 interface TabsRouteChildren {
-  TabsCommunityRoute: typeof TabsCommunityRoute
+  TabsCommunityRoute: typeof TabsCommunityRouteWithChildren
   TabsDailyRoute: typeof TabsDailyRoute
   TabsDebbyRoute: typeof TabsDebbyRoute
   TabsHomeRoute: typeof TabsHomeRoute
@@ -414,7 +476,7 @@ interface TabsRouteChildren {
 }
 
 const TabsRouteChildren: TabsRouteChildren = {
-  TabsCommunityRoute: TabsCommunityRoute,
+  TabsCommunityRoute: TabsCommunityRouteWithChildren,
   TabsDailyRoute: TabsDailyRoute,
   TabsDebbyRoute: TabsDebbyRoute,
   TabsHomeRoute: TabsHomeRoute,

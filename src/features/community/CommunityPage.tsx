@@ -2,7 +2,7 @@
 // home feed in the user's screenshot, but in Mamagist's own Fresh Green
 // look. Top bar with our logo, a "+" to post, and the avatar that opens
 // the menu. Under it, Feed and Groups tabs, the composer, then the posts,
-// newest first. Groups arrive in Part 3; until then the Groups tab says so.
+// newest first. Groups live at /community/groups (Part 3).
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Image as ImageIcon, Newspaper, Plus, Users } from "lucide-react";
@@ -11,7 +11,6 @@ import { useState } from "react";
 import { LoadError } from "@/components/LoadError";
 import { LogoMark } from "@/components/Logo";
 import { useAuth } from "@/features/auth/AuthProvider";
-import { cn } from "@/lib/utils";
 
 import { Composer } from "./Composer";
 import { fetchFeedPosts, fetchOwnFirstName } from "./communityApi";
@@ -19,20 +18,17 @@ import { CommunityMenu } from "./CommunityMenu";
 import { authorDisplayName, firstName } from "./displayName";
 import { AuthorAvatar, PostCard } from "./PostCard";
 
-type CommunityView = "feed" | "groups";
-
 export function CommunityPage() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [view, setView] = useState<CommunityView>("feed");
   const [menuOpen, setMenuOpen] = useState(false);
   const [composerOpen, setComposerOpen] = useState(false);
 
   const feed = useQuery({
     queryKey: ["community-feed", userId],
-    enabled: Boolean(userId) && view === "feed",
+    enabled: Boolean(userId),
     queryFn: () => fetchFeedPosts(userId),
   });
 
@@ -60,7 +56,6 @@ export function CommunityPage() {
         <button
           type="button"
           onClick={() => {
-            setView("feed");
             setComposerOpen(true);
           }}
           aria-label="Write a post"
@@ -84,7 +79,8 @@ export function CommunityPage() {
             items={[
               {
                 label: "Feed",
-                onClick: () => setView("feed"),
+                // Already on the feed — tapping only closes the menu.
+                onClick: () => {},
               },
               {
                 label: "Settings",
@@ -99,109 +95,82 @@ export function CommunityPage() {
       <div className="mt-4 flex border-b border-line">
         <button
           type="button"
-          onClick={() => setView("feed")}
-          aria-current={view === "feed" ? "page" : undefined}
-          className={cn(
-            "flex flex-1 items-center justify-center gap-2 border-b-2 py-3 text-base font-bold",
-            view === "feed" ? "border-primary text-primary" : "border-transparent text-muted",
-          )}
+          aria-current="page"
+          className="flex flex-1 items-center justify-center gap-2 border-b-2 border-primary py-3 text-base font-bold text-primary"
         >
           <Newspaper className="h-5 w-5" aria-hidden /> Feed
         </button>
         <button
           type="button"
-          onClick={() => setView("groups")}
-          aria-current={view === "groups" ? "page" : undefined}
-          className={cn(
-            "flex flex-1 items-center justify-center gap-2 border-b-2 py-3 text-base font-bold",
-            view === "groups" ? "border-primary text-primary" : "border-transparent text-muted",
-          )}
+          onClick={() => void navigate({ to: "/community/groups" })}
+          className="flex flex-1 items-center justify-center gap-2 border-b-2 border-transparent py-3 text-base font-bold text-muted"
         >
           <Users className="h-5 w-5" aria-hidden /> Groups
         </button>
       </div>
 
-      {view === "feed" ? (
-        <>
-          {/* Composer card, like "What's on your mind?" with a Photo button. */}
-          <div className="mt-4">
-            {composerOpen ? (
-              <Composer
-                userId={userId}
-                groupId={null}
-                firstName={myFirstName}
-                onPosted={() => {
-                  setComposerOpen(false);
-                  refreshFeed();
-                }}
-                onCancel={() => setComposerOpen(false)}
-              />
-            ) : (
-              <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
-                <AuthorAvatar name={myFirstName || "M"} />
-                <button
-                  type="button"
-                  onClick={() => setComposerOpen(true)}
-                  className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
-                >
-                  Share with other mothers…
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setComposerOpen(true)}
-                  className="flex shrink-0 flex-col items-center gap-0.5 text-primary"
-                  aria-label="Share a photo"
-                >
-                  <ImageIcon className="h-6 w-6" aria-hidden />
-                  <span className="text-[13px] font-bold">Photo</span>
-                </button>
-              </div>
-            )}
+      {/* Composer card, like "What's on your mind?" with a Photo button. */}
+      <div className="mt-4">
+        {composerOpen ? (
+          <Composer
+            userId={userId}
+            groupId={null}
+            firstName={myFirstName}
+            onPosted={() => {
+              setComposerOpen(false);
+              refreshFeed();
+            }}
+            onCancel={() => setComposerOpen(false)}
+          />
+        ) : (
+          <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
+            <AuthorAvatar name={myFirstName || "M"} />
+            <button
+              type="button"
+              onClick={() => setComposerOpen(true)}
+              className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
+            >
+              Share with other mothers…
+            </button>
+            <button
+              type="button"
+              onClick={() => setComposerOpen(true)}
+              className="flex shrink-0 flex-col items-center gap-0.5 text-primary"
+              aria-label="Share a photo"
+            >
+              <ImageIcon className="h-6 w-6" aria-hidden />
+              <span className="text-[13px] font-bold">Photo</span>
+            </button>
           </div>
+        )}
+      </div>
 
-          {/* The feed. */}
-          <div className="mt-4 space-y-4">
-            {feed.isPending ? (
-              <p className="rounded-[20px] bg-card p-4 text-base text-muted">Loading posts…</p>
-            ) : feed.isError ? (
-              <LoadError onRetry={() => void feed.refetch()} />
-            ) : (feed.data ?? []).length === 0 ? (
-              <div className="rounded-[20px] border border-line bg-card p-4 text-center">
-                <p className="text-[20px] font-extrabold text-ink">No posts yet</p>
-                <p className="mt-2 text-base text-muted">
-                  Be the first to share something with other mothers.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setComposerOpen(true)}
-                  className="mt-4 flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast"
-                >
-                  Share a post
-                </button>
-              </div>
-            ) : (
-              (feed.data ?? []).map((post) => (
-                <PostCard key={post.id} post={post} userId={userId} onChanged={refreshFeed} />
-              ))
-            )}
+      {/* The feed. */}
+      <div className="mt-4 space-y-4">
+        {feed.isPending ? (
+          <p className="rounded-[20px] bg-card p-4 text-base text-muted">Loading posts…</p>
+        ) : feed.isError ? (
+          <LoadError onRetry={() => void feed.refetch()} />
+        ) : (feed.data ?? []).length === 0 ? (
+          <div className="rounded-[20px] border border-line bg-card p-4 text-center">
+            <p className="text-[20px] font-extrabold text-ink">No posts yet</p>
+            <p className="mt-2 text-base text-muted">
+              Be the first to share something with other mothers.
+            </p>
+            <button
+              type="button"
+              onClick={() => setComposerOpen(true)}
+              className="mt-4 flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast"
+            >
+              Share a post
+            </button>
           </div>
-        </>
-      ) : (
-        <div className="mt-4 rounded-[20px] border border-line bg-card p-4 text-center">
-          <p className="text-[20px] font-extrabold text-ink">Groups are coming next</p>
-          <p className="mt-2 text-base text-muted">
-            You will be able to join groups and create your own — by due month, or any group you
-            want. The big feed above is open now.
-          </p>
-          <button
-            type="button"
-            onClick={() => setView("feed")}
-            className="mt-4 flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast"
-          >
-            Back to the feed
-          </button>
-        </div>
-      )}
+        ) : (
+          (feed.data ?? []).map((post) => (
+            <PostCard key={post.id} post={post} userId={userId} onChanged={refreshFeed} />
+          ))
+        )}
+      </div>
     </main>
   );
 }
