@@ -7,11 +7,11 @@ import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 import { LoadError } from "@/components/LoadError";
+import { OutlineButton } from "@/components/Buttons";
 import { FormError } from "@/features/auth/FormField";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { friendlySaveError } from "@/features/profile/saveError";
 
-import { Composer } from "./Composer";
 import {
   fetchGroup,
   fetchGroupMembers,
@@ -24,6 +24,7 @@ import {
   removeGroupMember,
 } from "./communityApi";
 import { authorDisplayName } from "./displayName";
+import { isMissingTablesError, MISSING_TABLES_MESSAGE } from "./missingTables";
 import { AuthorAvatar, PostCard } from "./PostCard";
 
 export function GroupPage({ groupId }: { groupId: string }) {
@@ -34,7 +35,10 @@ export function GroupPage({ groupId }: { groupId: string }) {
   const [busy, setBusy] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [composerOpen, setComposerOpen] = useState(false);
+
+  function openCreatePost() {
+    void navigate({ to: "/community/create-post", search: { groupId } });
+  }
 
   const group = useQuery({
     queryKey: ["community-group", groupId],
@@ -206,35 +210,34 @@ export function GroupPage({ groupId }: { groupId: string }) {
       {isMember ? (
         <>
           <div className="mt-4">
-            {composerOpen ? (
-              <Composer
-                userId={userId}
-                groupId={groupId}
-                firstName={(myName.data ?? "").trim().split(/\s+/)[0] ?? ""}
-                onPosted={() => {
-                  setComposerOpen(false);
-                  refresh();
-                }}
-                onCancel={() => setComposerOpen(false)}
-              />
-            ) : (
-              <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
-                <AuthorAvatar name={myName.data ?? "M"} />
-                <button
-                  type="button"
-                  onClick={() => setComposerOpen(true)}
-                  className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
-                >
-                  Share with this group…
-                </button>
-              </div>
-            )}
+            <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
+              <AuthorAvatar name={myName.data ?? "M"} />
+              <button
+                type="button"
+                onClick={openCreatePost}
+                className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
+              >
+                Share with this group…
+              </button>
+            </div>
           </div>
           <div className="mt-4 space-y-4">
             {posts.isPending ? (
               <p className="rounded-[20px] bg-card p-4 text-base text-muted">Loading posts…</p>
             ) : posts.isError ? (
-              <LoadError onRetry={() => void posts.refetch()} />
+              isMissingTablesError(posts.error) ? (
+                <div
+                  role="alert"
+                  className="space-y-4 rounded-[20px] bg-card p-4 text-card-foreground"
+                >
+                  <p className="text-base font-semibold">{MISSING_TABLES_MESSAGE}</p>
+                  <OutlineButton type="button" onClick={() => void posts.refetch()}>
+                    Try again
+                  </OutlineButton>
+                </div>
+              ) : (
+                <LoadError onRetry={() => void posts.refetch()} />
+              )
             ) : (posts.data ?? []).length === 0 ? (
               <div className="rounded-[20px] border border-line bg-card p-4 text-center">
                 <p className="text-base font-bold text-ink">No posts in this group yet</p>

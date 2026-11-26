@@ -26,6 +26,7 @@ import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
 import { Route as TabsPregnancyDateRouteImport } from './routes/_tabs.pregnancy-date'
 import { Route as TabsProfileRouteImport } from './routes/_tabs.profile'
 import { Route as TabsSettingsRouteImport } from './routes/_tabs.settings'
+import { Route as CommunityCreatePostRouteImport } from './routes/community_.create-post'
 import { Route as SignupDetailsRouteImport } from './routes/signup_.details'
 import { Route as SignupPeriodRouteImport } from './routes/signup_.period'
 import { Route as TabsCommunityGroupsRouteImport } from './routes/_tabs.community.groups'
@@ -115,6 +116,11 @@ const TabsSettingsRoute = TabsSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => TabsRoute,
 } as any)
+const CommunityCreatePostRoute = CommunityCreatePostRouteImport.update({
+  id: '/community_/create-post',
+  path: '/community/create-post',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupDetailsRoute = SignupDetailsRouteImport.update({
   id: '/signup_/details',
   path: '/signup/details',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
   '/settings': typeof TabsSettingsRoute
+  '/community/create-post': typeof CommunityCreatePostRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
   '/community/groups': typeof TabsCommunityGroupsRouteWithChildren
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
   '/settings': typeof TabsSettingsRoute
+  '/community/create-post': typeof CommunityCreatePostRoute
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
   '/community/groups': typeof TabsCommunityGroupsRouteWithChildren
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/_tabs/pregnancy-date': typeof TabsPregnancyDateRoute
   '/_tabs/profile': typeof TabsProfileRoute
   '/_tabs/settings': typeof TabsSettingsRoute
+  '/community_/create-post': typeof CommunityCreatePostRoute
   '/signup_/details': typeof SignupDetailsRoute
   '/signup_/period': typeof SignupPeriodRoute
   '/_tabs/community/groups': typeof TabsCommunityGroupsRouteWithChildren
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/pregnancy-date'
     | '/profile'
     | '/settings'
+    | '/community/create-post'
     | '/signup/details'
     | '/signup/period'
     | '/community/groups'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/pregnancy-date'
     | '/profile'
     | '/settings'
+    | '/community/create-post'
     | '/signup/details'
     | '/signup/period'
     | '/community/groups'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/_tabs/pregnancy-date'
     | '/_tabs/profile'
     | '/_tabs/settings'
+    | '/community_/create-post'
     | '/signup_/details'
     | '/signup_/period'
     | '/_tabs/community/groups'
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  CommunityCreatePostRoute: typeof CommunityCreatePostRoute
   SignupDetailsRoute: typeof SignupDetailsRoute
   SignupPeriodRoute: typeof SignupPeriodRoute
 }
@@ -411,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsSettingsRouteImport
       parentRoute: typeof TabsRoute
     }
+    '/community_/create-post': {
+      id: '/community_/create-post'
+      path: '/community/create-post'
+      fullPath: '/community/create-post'
+      preLoaderRoute: typeof CommunityCreatePostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup_/details': {
       id: '/signup_/details'
       path: '/signup/details'
@@ -498,6 +518,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  CommunityCreatePostRoute: CommunityCreatePostRoute,
   SignupDetailsRoute: SignupDetailsRoute,
   SignupPeriodRoute: SignupPeriodRoute,
 }

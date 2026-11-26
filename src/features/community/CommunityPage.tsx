@@ -8,14 +8,15 @@ import { useNavigate } from "@tanstack/react-router";
 import { Image as ImageIcon, Newspaper, Plus, Users } from "lucide-react";
 import { useState } from "react";
 
+import { OutlineButton } from "@/components/Buttons";
 import { LoadError } from "@/components/LoadError";
 import { LogoMark } from "@/components/Logo";
 import { useAuth } from "@/features/auth/AuthProvider";
 
-import { Composer } from "./Composer";
 import { fetchFeedPosts, fetchOwnFirstName } from "./communityApi";
 import { CommunityMenu } from "./CommunityMenu";
 import { authorDisplayName, firstName } from "./displayName";
+import { isMissingTablesError, MISSING_TABLES_MESSAGE } from "./missingTables";
 import { AuthorAvatar, PostCard } from "./PostCard";
 
 export function CommunityPage() {
@@ -24,7 +25,10 @@ export function CommunityPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [composerOpen, setComposerOpen] = useState(false);
+
+  function openCreatePost() {
+    void navigate({ to: "/community/create-post", search: {} });
+  }
 
   const feed = useQuery({
     queryKey: ["community-feed", userId],
@@ -55,9 +59,7 @@ export function CommunityPage() {
         </div>
         <button
           type="button"
-          onClick={() => {
-            setComposerOpen(true);
-          }}
+          onClick={openCreatePost}
           aria-label="Write a post"
           className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface text-ink"
         >
@@ -123,40 +125,28 @@ export function CommunityPage() {
         </button>
       </div>
 
-      {/* Composer card, like "What's on your mind?" with a Photo button. */}
+      {/* Composer card, like "What's on your mind?" with a Photo button.
+          Both open the full-screen Create post page. */}
       <div className="mt-4">
-        {composerOpen ? (
-          <Composer
-            userId={userId}
-            groupId={null}
-            firstName={myFirstName}
-            onPosted={() => {
-              setComposerOpen(false);
-              refreshFeed();
-            }}
-            onCancel={() => setComposerOpen(false)}
-          />
-        ) : (
-          <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
-            <AuthorAvatar name={myFirstName || "M"} />
-            <button
-              type="button"
-              onClick={() => setComposerOpen(true)}
-              className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
-            >
-              Share with other mothers…
-            </button>
-            <button
-              type="button"
-              onClick={() => setComposerOpen(true)}
-              className="flex shrink-0 flex-col items-center gap-0.5 text-primary"
-              aria-label="Share a photo"
-            >
-              <ImageIcon className="h-6 w-6" aria-hidden />
-              <span className="text-[13px] font-bold">Photo</span>
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3 rounded-[20px] border border-line bg-card p-3">
+          <AuthorAvatar name={myFirstName || "M"} />
+          <button
+            type="button"
+            onClick={openCreatePost}
+            className="h-12 min-w-0 flex-1 rounded-full bg-surface px-4 text-left text-base text-muted"
+          >
+            Share with other mothers…
+          </button>
+          <button
+            type="button"
+            onClick={openCreatePost}
+            className="flex shrink-0 flex-col items-center gap-0.5 text-primary"
+            aria-label="Share a photo"
+          >
+            <ImageIcon className="h-6 w-6" aria-hidden />
+            <span className="text-[13px] font-bold">Photo</span>
+          </button>
+        </div>
       </div>
 
       {/* The feed. */}
@@ -164,7 +154,19 @@ export function CommunityPage() {
         {feed.isPending ? (
           <p className="rounded-[20px] bg-card p-4 text-base text-muted">Loading posts…</p>
         ) : feed.isError ? (
-          <LoadError onRetry={() => void feed.refetch()} />
+          isMissingTablesError(feed.error) ? (
+            <div
+              role="alert"
+              className="space-y-4 rounded-[20px] bg-card p-4 text-card-foreground"
+            >
+              <p className="text-base font-semibold">{MISSING_TABLES_MESSAGE}</p>
+              <OutlineButton type="button" onClick={() => void feed.refetch()}>
+                Try again
+              </OutlineButton>
+            </div>
+          ) : (
+            <LoadError onRetry={() => void feed.refetch()} />
+          )
         ) : (feed.data ?? []).length === 0 ? (
           <div className="rounded-[20px] border border-line bg-card p-4 text-center">
             <p className="text-[20px] font-extrabold text-ink">No posts yet</p>
@@ -173,7 +175,7 @@ export function CommunityPage() {
             </p>
             <button
               type="button"
-              onClick={() => setComposerOpen(true)}
+              onClick={openCreatePost}
               className="mt-4 flex h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-primary-contrast"
             >
               Share a post
