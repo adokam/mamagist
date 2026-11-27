@@ -30,3 +30,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated app icons (built from public/icon.svg by scripts/build-icons.mjs
+# on every build — never upload or commit these PNGs)
+public/icon-192.png
+public/icon-512.png
+public/icon-maskable-512.png
+public/apple-touch-icon.png
+public/favicon.png
