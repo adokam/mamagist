@@ -7,6 +7,7 @@ import { OutlineButton } from "@/components/Buttons";
 import { LineCard } from "@/components/Cards";
 import { LoadError } from "@/components/LoadError";
 import { PageHeader } from "@/components/PageHeader";
+import { clearDebbyMemory } from "@/features/ai-chat/debbyMemory";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { FormError } from "@/features/auth/FormField";
 import {
@@ -50,6 +51,10 @@ export function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savedNote, setSavedNote] = useState(false);
+  const [clearOpen, setClearOpen] = useState(false);
+  const [clearing, setClearing] = useState(false);
+  const [clearError, setClearError] = useState<string | null>(null);
+  const [clearedNote, setClearedNote] = useState(false);
 
   useEffect(() => {
     if (reminders.data && !loaded) {
@@ -80,6 +85,21 @@ export function SettingsPage() {
   async function onLogOut() {
     await signOut();
     await navigate({ to: "/login", replace: true });
+  }
+
+  async function onClearMemory() {
+    if (!userId || clearing) return;
+    setClearing(true);
+    setClearError(null);
+    try {
+      await clearDebbyMemory(userId);
+      setClearOpen(false);
+      setClearedNote(true);
+    } catch {
+      setClearError("We couldn't clear Debby's notes. Please try again.");
+    } finally {
+      setClearing(false);
+    }
   }
 
   return (
@@ -160,6 +180,27 @@ export function SettingsPage() {
             </Row>
           </LineCard>
 
+          <button
+            type="button"
+            onClick={() => {
+              setClearError(null);
+              setClearOpen(true);
+            }}
+            className="block w-full rounded-[20px] text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
+            <LineCard className="flex items-center justify-between gap-3">
+              <span className="text-base font-bold text-foreground">
+                Clear what Debby remembers
+              </span>
+              <ChevronRight className="h-6 w-6 shrink-0 text-foreground" aria-hidden />
+            </LineCard>
+          </button>
+          {clearedNote ? (
+            <p className="px-1 text-[15px] font-semibold text-foreground">
+              Done. Debby has forgotten her short notes about you.
+            </p>
+          ) : null}
+
           <LinkRow to="/install" label="Install the app" />
           <LinkRow to="/privacy" label="Privacy policy" />
           <LinkRow to="/terms" label="Terms of use" />
@@ -171,6 +212,45 @@ export function SettingsPage() {
           </div>
         </div>
       )}
+
+      {clearOpen ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 px-6">
+          <div
+            role="dialog"
+            aria-label="Clear what Debby remembers"
+            className="w-full max-w-[340px] rounded-[20px] bg-card p-5 shadow-xl"
+          >
+            <p className="text-[18px] font-extrabold text-ink">Clear what Debby remembers?</p>
+            <p className="mt-2 text-[15px] leading-relaxed text-foreground">
+              Debby will forget the short notes she keeps about you. Your chats stay. She
+              will still know your week and stage.
+            </p>
+            {clearError ? (
+              <div className="mt-2">
+                <FormError message={clearError} />
+              </div>
+            ) : null}
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => void onClearMemory()}
+                disabled={clearing}
+                className="flex h-11 flex-1 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-contrast disabled:opacity-50"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={() => setClearOpen(false)}
+                disabled={clearing}
+                className="flex h-11 flex-1 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-primary disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
