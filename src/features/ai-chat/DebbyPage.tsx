@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 
 import { useNavigate } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 
 import { PrimaryButton } from "@/components/Buttons";
 import { LoadError } from "@/components/LoadError";
@@ -10,8 +11,10 @@ import { FormError } from "@/features/auth/FormField";
 import { cn } from "@/lib/utils";
 
 import { chipsForStage } from "./chips";
+import { DebbyMenuPanel } from "./DebbyMenuPanel";
 import { MAX_MESSAGE_LENGTH, SHOW_COUNTER_AFTER } from "./debbyText";
 import { useDebbyChat, type ChatItem } from "./useDebbyChat";
+import { useDebbyChatList } from "./useDebbyChatList";
 import { useKeyboardViewport } from "./useKeyboardViewport";
 
 /** One Debby chat. chatId is the open chat, or null for a new empty chat. */
@@ -30,6 +33,8 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
   });
   const keyboard = useKeyboardViewport();
   const [draft, setDraft] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const chatList = useDebbyChatList();
   const scrollRef = useRef<HTMLDivElement>(null);
   const keepPosition = useRef<number | null>(null);
 
@@ -75,6 +80,17 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
       style={keyboard ? { top: keyboard.top, height: keyboard.height } : undefined}
     >
       <header className="flex shrink-0 items-center gap-3 border-b border-border px-5 pt-4 pb-3">
+        <button
+          type="button"
+          onClick={() => {
+            chatList.refetch();
+            setMenuOpen(true);
+          }}
+          aria-label="Open chat menu"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-foreground"
+        >
+          <Menu aria-hidden className="h-6 w-6" />
+        </button>
         <span
           aria-hidden
           className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary text-[20px] font-extrabold text-primary-contrast"
@@ -181,6 +197,24 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
           </p>
         ) : null}
       </div>
+
+      <DebbyMenuPanel
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        chats={chatList.chats}
+        openChatId={chatId}
+        fullName={chat.fullName}
+        timeZone={chat.timezone}
+        isLoading={chatList.isLoading}
+        isError={chatList.isError}
+        onRetry={chatList.retry}
+        hasMore={chatList.hasMore}
+        loadingMore={chatList.loadingMore}
+        onLoadMore={chatList.loadMore}
+        onSelectChat={(id) => void navigate({ to: "/debby/$chatId", params: { chatId: id } })}
+        onNewChat={() => void navigate({ to: "/debby" })}
+        onProfile={() => void navigate({ to: "/profile" })}
+      />
     </main>
   );
 }

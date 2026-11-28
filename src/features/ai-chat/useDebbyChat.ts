@@ -230,6 +230,10 @@ export function useDebbyChat(
     },
     guide,
     stage: profile.data?.stage ?? null,
+    /** Her full name, for the menu avatar. Null until the profile loads. */
+    fullName: profile.data?.full_name ?? null,
+    /** Her time zone, for grouping chats into Today, Yesterday, Earlier. */
+    timezone: profile.data?.timezone ?? null,
     items: items ?? [],
     canLoadEarlier: history.hasNextPage,
     loadingEarlier: history.isFetchingNextPage,
