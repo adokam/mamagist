@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 
+import type { InfiniteData } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 
@@ -8,18 +10,24 @@ import { LoadError } from "@/components/LoadError";
 import { TextInput } from "@/components/TextInput";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FormError } from "@/features/auth/FormField";
+import { useAuth } from "@/features/auth/AuthProvider";
 import { cn } from "@/lib/utils";
 
 import { chipsForStage } from "./chips";
+import { applyReplyToChatList } from "./chatListUpdates";
 import { DebbyMenuPanel } from "./DebbyMenuPanel";
+import type { ChatRow } from "./debbyChats";
 import { MAX_MESSAGE_LENGTH, SHOW_COUNTER_AFTER } from "./debbyText";
 import { useDebbyChat, type ChatItem } from "./useDebbyChat";
-import { useDebbyChatList } from "./useDebbyChatList";
+import { CHAT_LIST_PAGE_SIZE, useDebbyChatList } from "./useDebbyChatList";
 import { useKeyboardViewport } from "./useKeyboardViewport";
 
 /** One Debby chat. chatId is the open chat, or null for a new empty chat. */
 export function DebbyPage({ chatId }: { chatId: string | null }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
   const chat = useDebbyChat(chatId, (state) => {
     // First reply of a new chat: the function created the chat. Move to its
     // address without adding a history entry, so a refresh keeps the chat.
@@ -29,6 +37,24 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
         params: { chatId: state.chatId },
         replace: true,
       });
+    }
+    // Keep the menu list fresh: a new chat joins the top with its title,
+    // every other reply moves its chat to the top, a gone chat leaves it.
+    if (userId) {
+      queryClient.setQueryData<InfiniteData<ChatRow[]>>(
+        ["debby-chats", userId],
+        (old) => {
+          if (!old) return old;
+          const flat = old.pages.flat();
+          const updated = applyReplyToChatList(flat, state, userId);
+          if (updated === flat) return old;
+          const pages: ChatRow[][] = [];
+          for (let i = 0; i < updated.length; i += CHAT_LIST_PAGE_SIZE) {
+            pages.push(updated.slice(i, i + CHAT_LIST_PAGE_SIZE));
+          }
+          return { ...old, pages, pageParams: pages.map((_, i) => i) };
+        },
+      );
     }
   });
   const keyboard = useKeyboardViewport();
