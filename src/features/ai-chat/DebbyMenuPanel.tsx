@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import type { InfiniteData } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, MoreVertical, Plus } from "lucide-react";
+import { MessageSquare, MoreVertical, Plus, X } from "lucide-react";
 
 import { LogoMark } from "@/components/Logo";
 import { LoadError } from "@/components/LoadError";
@@ -152,15 +152,28 @@ export function DebbyMenuPanel({
         onClick={onClose}
         className="absolute inset-0 cursor-default bg-black/40"
       />
-      {/* The panel stays inside the 430px app column on wide screens. */}
-      <div className="relative mx-auto flex h-full w-full max-w-[430px]">
-        <aside className="flex h-full w-[85%] max-w-[340px] flex-col bg-card shadow-xl">
+      {/* The wrapper is pointer-events-none so taps on the dimmed area around
+          the panel reach the dim button below it; the panel and dialogs turn
+          their own events back on. Without this the wrapper swallows every
+          tap and the dim layer can never close the menu. */}
+      <div className="pointer-events-none relative mx-auto flex h-full w-full max-w-[430px]">
+        <aside className="pointer-events-auto flex h-full w-[85%] max-w-[340px] flex-col bg-card shadow-xl">
           <div className="shrink-0 px-5 pt-5">
-            <div className="flex items-center gap-2.5">
-              <LogoMark className="h-10 w-10 rounded-[12px]" />
-              <span className="text-[18px] leading-none font-extrabold tracking-tight text-ink">
-                Mamagist
-              </span>
+            <div className="flex items-center justify-between gap-2.5">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <LogoMark className="h-10 w-10 rounded-[12px]" />
+                <span className="text-[18px] leading-none font-extrabold tracking-tight text-ink">
+                  Mamagist
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close menu"
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-foreground"
+              >
+                <X aria-hidden className="h-6 w-6" />
+              </button>
             </div>
             <p className="mt-5 text-[13px] font-bold tracking-wide text-muted uppercase">
               Recents
@@ -274,7 +287,7 @@ export function DebbyMenuPanel({
             )}
           </div>
 
-          <div className="flex shrink-0 items-center justify-between border-t border-line px-5 py-3">
+          <div className="flex shrink-0 items-center justify-between border-t border-line px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
             <button
               type="button"
               onClick={() => {
@@ -301,7 +314,7 @@ export function DebbyMenuPanel({
         </aside>
 
         {dialog?.type === "rename" ? (
-          <div className="absolute inset-0 z-10 grid place-items-center bg-black/40 px-6">
+          <div className="pointer-events-auto absolute inset-0 z-10 grid place-items-center bg-black/40 px-6">
             <div
               role="dialog"
               aria-label="Rename chat"
@@ -351,7 +364,7 @@ export function DebbyMenuPanel({
         ) : null}
 
         {dialog?.type === "delete" ? (
-          <div className="absolute inset-0 z-10 grid place-items-center bg-black/40 px-6">
+          <div className="pointer-events-auto absolute inset-0 z-10 grid place-items-center bg-black/40 px-6">
             <div
               role="dialog"
               aria-label="Delete chat"

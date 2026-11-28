@@ -97,14 +97,19 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
 
   const inputOff = chat.sending || chat.limited || chat.gone || chat.status !== "ready";
 
+  // The menu panel is a sibling of <main>, not a child of it: <main> is a
+  // fixed box that ends above the bottom bar, and a panel nested inside it
+  // would end there too, hiding its footer behind the bar. As a sibling, the
+  // panel's fixed inset-0 covers the whole screen including the bar.
   return (
-    <main
-      className={cn(
-        "fixed inset-x-0 mx-auto flex w-full max-w-[430px] flex-col bg-background",
-        keyboard ? "z-50" : "top-0 h-[calc(100dvh-79px-env(safe-area-inset-bottom))]",
-      )}
-      style={keyboard ? { top: keyboard.top, height: keyboard.height } : undefined}
-    >
+    <>
+      <main
+        className={cn(
+          "fixed inset-x-0 mx-auto flex w-full max-w-[430px] flex-col bg-background",
+          keyboard ? "z-50" : "top-0 h-[calc(100dvh-79px-env(safe-area-inset-bottom))]",
+        )}
+        style={keyboard ? { top: keyboard.top, height: keyboard.height } : undefined}
+      >
       <header className="flex shrink-0 items-center gap-3 border-b border-border px-5 pt-4 pb-3">
         <button
           type="button"
@@ -223,6 +228,7 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
           </p>
         ) : null}
       </div>
+      </main>
 
       <DebbyMenuPanel
         open={menuOpen}
@@ -241,7 +247,7 @@ export function DebbyPage({ chatId }: { chatId: string | null }) {
         onNewChat={() => void navigate({ to: "/debby" })}
         onProfile={() => void navigate({ to: "/profile" })}
       />
-    </main>
+    </>
   );
 }
 
