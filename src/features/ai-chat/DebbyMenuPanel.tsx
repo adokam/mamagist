@@ -3,14 +3,26 @@
 // ever shown here — they are never stored on the phone.
 import { useState } from "react";
 
+import type { InfiniteData } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { MessageSquare, MoreVertical, Plus } from "lucide-react";
 
 import { LogoMark } from "@/components/Logo";
 import { LoadError } from "@/components/LoadError";
+import { TextInput } from "@/components/TextInput";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FormError } from "@/features/auth/FormField";
+import { useAuth } from "@/features/auth/AuthProvider";
 
 import { groupChats } from "./chatGroups";
+import { MAX_CHAT_TITLE_LENGTH, validateChatTitle } from "./chatTitle";
+import { deleteDebbyChat, renameDebbyChat } from "./debbyChatActions";
 import type { ChatRow } from "./debbyChats";
+
+type ChatDialog =
+  | { type: "rename"; chat: ChatRow }
+  | { type: "delete"; chat: ChatRow }
+  | null;
 
 export function DebbyMenuPanel({
   open,
@@ -46,10 +58,90 @@ export function DebbyMenuPanel({
   onProfile: () => void;
 }) {
   const [menuChatId, setMenuChatId] = useState<string | null>(null);
+  const [dialog, setDialog] = useState<ChatDialog>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [renameError, setRenameError] = useState<string | null>(null);
+  const [dialogError, setDialogError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const { user } = useAuth();
+  const userId = user?.id ?? "";
+  const queryClient = useQueryClient();
   if (!open) return null;
 
   const initial = (fullName ?? "").trim().charAt(0).toUpperCase() || "M";
   const groups = groupChats(chats, timeZone);
+
+  const openRename = (chat: ChatRow) => {
+    setMenuChatId(null);
+    setRenameValue(chat.title);
+    setRenameError(null);
+    setDialogError(null);
+    setDialog({ type: "rename", chat });
+  };
+
+  const openDelete = (chat: ChatRow) => {
+    setMenuChatId(null);
+    setDialogError(null);
+    setDialog({ type: "delete", chat });
+  };
+
+  const saveRename = () => {
+    if (!dialog || dialog.type !== "rename" || busy) return;
+    const checked = validateChatTitle(renameValue);
+    if (!checked.ok) {
+      setRenameError(checked.error);
+      return;
+    }
+    setBusy(true);
+    setRenameError(null);
+    void renameDebbyChat(userId, dialog.chat.id, checked.title)
+      .then(() => {
+        const title = checked.title;
+        queryClient.setQueryData<InfiniteData<ChatRow[]>>(
+          ["debby-chats", userId],
+          (old) =>
+            old
+              ? {
+                  ...old,
+                  pages: old.pages.map((page) =>
+                    page.map((row) => (row.id === dialog.chat.id ? { ...row, title } : row)),
+                  ),
+                }
+              : old,
+        );
+        setDialog(null);
+      })
+      .catch(() => setDialogError("We couldn't rename this chat. Please try again."))
+      .finally(() => setBusy(false));
+  };
+
+  const confirmDelete = () => {
+    if (!dialog || dialog.type !== "delete" || busy) return;
+    const chat = dialog.chat;
+    const wasOpen = chat.id === openChatId;
+    setBusy(true);
+    setDialogError(null);
+    void deleteDebbyChat(userId, chat.id)
+      .then(() => {
+        queryClient.setQueryData<InfiniteData<ChatRow[]>>(
+          ["debby-chats", userId],
+          (old) =>
+            old
+              ? {
+                  ...old,
+                  pages: old.pages.map((page) => page.filter((row) => row.id !== chat.id)),
+                }
+              : old,
+        );
+        setDialog(null);
+        if (wasOpen) {
+          onClose();
+          onNewChat();
+        }
+      })
+      .catch(() => setDialogError("We couldn't delete this chat. Please try again."))
+      .finally(() => setBusy(false));
+  };
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-label="Your chats with Debby">
@@ -146,14 +238,14 @@ export function DebbyMenuPanel({
                               <div className="absolute right-0 z-40 mt-1 w-48 overflow-hidden rounded-[16px] border border-line bg-card shadow">
                                 <button
                                   type="button"
-                                  onClick={() => setMenuChatId(null)}
+                                  onClick={() => openRename(chat)}
                                   className="block w-full px-4 py-3 text-left text-base font-bold text-ink"
                                 >
                                   Rename
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => setMenuChatId(null)}
+                                  onClick={() => openDelete(chat)}
                                   className="block w-full px-4 py-3 text-left text-base font-bold text-ink"
                                 >
                                   Delete
@@ -207,6 +299,95 @@ export function DebbyMenuPanel({
             </button>
           </div>
         </aside>
+
+        {dialog?.type === "rename" ? (
+          <div className="absolute inset-0 z-10 grid place-items-center bg-black/40 px-6">
+            <div
+              role="dialog"
+              aria-label="Rename chat"
+              className="w-full max-w-[320px] rounded-[20px] bg-card p-5 shadow-xl"
+            >
+              <p className="text-[18px] font-extrabold text-ink">Rename chat</p>
+              <div className="mt-3">
+                <TextInput
+                  value={renameValue}
+                  onChange={(e) => setRenameValue(e.target.value)}
+                  maxLength={MAX_CHAT_TITLE_LENGTH}
+                  disabled={busy}
+                  aria-label="Chat title"
+                  autoComplete="off"
+                />
+              </div>
+              {renameError ? (
+                <div className="mt-2">
+                  <FormError message={renameError} />
+                </div>
+              ) : null}
+              {dialogError ? (
+                <div className="mt-2">
+                  <FormError message={dialogError} />
+                </div>
+              ) : null}
+              <div className="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onClick={saveRename}
+                  disabled={busy}
+                  className="flex h-11 flex-1 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-contrast disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDialog(null)}
+                  disabled={busy}
+                  className="flex h-11 flex-1 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-primary disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {dialog?.type === "delete" ? (
+          <div className="absolute inset-0 z-10 grid place-items-center bg-black/40 px-6">
+            <div
+              role="dialog"
+              aria-label="Delete chat"
+              className="w-full max-w-[320px] rounded-[20px] bg-card p-5 shadow-xl"
+            >
+              <p className="text-[18px] font-extrabold text-ink">Delete this chat?</p>
+              <p className="mt-2 text-[15px] leading-relaxed text-foreground">
+                This removes the chat and its messages for good. Debby keeps short notes
+                about you until you clear them in Settings.
+              </p>
+              {dialogError ? (
+                <div className="mt-2">
+                  <FormError message={dialogError} />
+                </div>
+              ) : null}
+              <div className="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  disabled={busy}
+                  className="flex h-11 flex-1 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-contrast disabled:opacity-50"
+                >
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDialog(null)}
+                  disabled={busy}
+                  className="flex h-11 flex-1 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-primary disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
