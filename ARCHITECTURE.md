@@ -31,8 +31,9 @@ Every user_id / id that points to auth.users uses ON DELETE CASCADE: deleting an
 - `user_roles` - Owner can read her own role. Only the service role can insert, update or delete.
 - `daily_tasks` - Signed-in users can read active tasks. No app writes; edited in the Supabase dashboard.
 - `task_completions` - Only the owner can read, insert and delete. One row per user, task and day.
-- `chat_messages` - Owner can read. Only the service role can insert. Nobody can update or delete from the app.
-- `chat_summaries` - Owner can read. Only the service role can write.
+- `chats` - One row per Debby chat. Only the owner can read her own chats, rename her own chats (the title column only, 1 to 80 characters) and delete her own chats. She cannot insert: only the debby-chat function creates a chat, on the first message. Deleting a chat deletes its messages. Backend applied by hand in Supabase; recorded for history in migration `20261128120000` (marked already applied, must not be run again).
+- `chat_messages` - Owner can read. Only the service role can insert. Nobody can update or delete from the app. Each row has `chat_id` (NULL only for old rows from before multi-chat); deleting a chat deletes its messages.
+- `chat_summaries` - Owner can read. Only the service role can write. The owner can clear her own notes by updating her own row with `summary` set to an empty string and `updated_at` set to now — that is the only update the app makes, from Settings ("Clear what Debby remembers").
 - `weekly_content` - Signed-in users can read (weeks 1 to 42). No app writes. Rows marked "Draft, pending review" must be reviewed by a doctor or midwife before launch.
 - `push_subscriptions` - Only the owner can read, insert and delete. Endpoint is unique.
 - `notify_list` - Owner can insert and read her own rows. One row per user and topic.
@@ -122,19 +123,28 @@ Location: src/features/daily-checklist. Route: /daily, with the bottom bar (Dail
 
 ## Ask Debby chat
 
-Location: src/features/ai-chat. Route: /debby, signed in users only, with the bottom bar (Debby active).
+Location: src/features/ai-chat. Routes: /debby (a new empty chat) and /debby/:chatId (an open chat), signed in users only, with the bottom bar (Debby active).
 
-- The edge function lives in supabase/functions/debby-chat/index.ts and is created and deployed from the Supabase dashboard, not from this app. The front end only calls `supabase.functions.invoke("debby-chat", { body: { message } })` with the existing Supabase client (debbyApi.ts). No key is ever in the front end.
+Multi-chat design (like Claude and ChatGPT, but Mamagist's own look):
+- Opening Debby always starts a new empty chat — from the bottom bar on another screen and from Home's "Start chat". It never opens her last chat. Tapping Debby in the bottom bar while already on any /debby address does nothing (debbyTabAction in debbyChats.ts). Empty chats are never saved: a chat only exists after the first message gets its reply, and the debby-chat function creates it.
+- When the first message of a new chat gets its reply, the screen keeps the chat_id from the reply and changes the address to /debby/:chatId with a router replace (no history entry), so a refresh keeps the chat.
+- The hamburger button at the left of the header opens a side panel from the left (85% wide, max 340px, dim layer behind it; tapping the dim layer, choosing a chat or New chat closes it). Inside: a small Mamagist logo and name, then "Recents", then her chats newest first by updated_at, grouped Today, Yesterday, Earlier in her time zone (groupChats in chatGroups.ts, using her timezone from private_profiles). Each row is 48px tall: chat icon, title on one line with an ellipsis, three dot button on the right. The open chat's row has a soft surface background. 30 chats load first, with a "Load more" button (useDebbyChatList.ts). No chats: "No chats yet. Tell Debby how you feel to start one." At the bottom, always visible: her round avatar with her first initial on the left (opens /profile) and a New chat pill on the right (primary, plus icon). The panel uses theme tokens, so it looks right in light and dark mode.
+- The three dot button opens a small menu with Rename and Delete. Rename opens a small dialog with the title already filled in (80 character limit, trimmed, not empty — validateChatTitle in chatTitle.ts); saving updates the title on her own chat row (renameDebbyChat in debbyChatActions.ts) and the row in the list. Delete opens a dialog ("Delete this chat? This removes the chat and its messages for good. Debby keeps short notes about you until you clear them in Settings."); deleting removes her own chat row (deleteDebbyChat) and its messages, and if it was the open chat the screen goes to /debby as a new chat. Both dialogs show a friendly error when they fail.
+- After every reply the menu list is kept fresh (applyReplyToChatList in chatListUpdates.ts): a new chat's first reply adds the chat to the top with the title from the reply; any other reply moves its chat to the top; a "gone" reply drops the chat from the list, because it no longer exists.
+- The edge function lives in supabase/functions/debby-chat/index.ts and is created and deployed from the Supabase dashboard, not from this app. The front end only calls `supabase.functions.invoke("debby-chat", { body: { message, chat_id } })` with the existing Supabase client (debbyApi.ts), sending chat_id as null for the first message of a new chat. No key is ever in the front end.
 - debby-chat response fields (JSON):
-  - `code`: one of ok, safety, limit, busy, error, too_long
+  - `code`: one of ok, safety, limit, busy, error, too_long, gone (gone means the chat does not exist any more)
   - `reply`: the text shown as Debby's message
   - `safety_triggered`: true or false
   - `remaining`: messages left today (only on ok and limit)
-- Code handling is the pure function debbyReplyState (debbyResponse.ts): ok shows the reply; safety shows it in a peach bubble with a 2px deep green border; limit shows it and turns the input off ("Debby will be back tomorrow") until her day changes in her time zone (same today code as the daily checklist); busy and error show it with "Try again", which resends the same message without a second bubble of hers; too_long shows it with no retry. A failed call (no internet, auth error, or no valid answer) shows "We could not reach Debby. Check your internet and try again." with "Try again".
+  - `chat_id`: the chat the reply belongs to (always on ok, safety, limit, busy, error, too_long)
+  - `title`: the chat's title (only on a new chat's first reply)
+- Code handling is the pure function debbyReplyState (debbyResponse.ts): ok shows the reply; safety shows it in an alert bubble with a 2px alert border; limit shows it and turns the input off ("Debby will be back tomorrow") until her day changes in her time zone (same today code as the daily checklist); busy and error show it with "Try again", which resends the same message without a second bubble of hers; too_long shows it with no retry; gone shows the reply as a Debby bubble with a small "Start a new chat" button under it and the input off. A failed call (no internet, auth error, or no valid answer) shows "We could not reach Debby. Check your internet and try again." with "Try again".
 - Header line: "Your pregnancy guide · 26 weeks, 4 days" from pregnancyAge, "Your pregnancy guide" with no date, "Your guide for new mothers" for new_mother and breastfeeding (debbyText.ts).
-- History: her last 50 chat_messages rows (id, role, content, safety_triggered, created_at), oldest at the top. When 50 came back, "Load earlier messages" loads 50 more. With no history, a first Debby message is shown and not saved.
+- History: the last 50 chat_messages rows for the open chat only (filtered by chat_id), oldest at the top. When 50 came back, "Load earlier messages" loads 50 more. A new empty chat shows Debby's first greeting and the quick reply chips.
 - Quick reply chips are in chips.ts (pregnant or empty stage vs new mother and breastfeeding).
 - Messages are text only (never HTML or markdown), kept in memory only (never in local storage), and never logged to the console or analytics. Max 1000 characters; a counter shows after 900.
+- Privacy rules for chats: do not log chat titles, messages or replies; do not store chats or titles on the phone (the chat list lives in the in-memory query cache only); the service worker never caches the chat list or any chat message (public/sw.js skips Supabase, auth, debby-chat and edge-function requests). The chat tables are typed in debbyChats.ts (debbySupabase) because src/integrations/supabase/types.ts is generated and must not be edited by hand.
 - Layout: header at the top, only the messages scroll, the note and input sit above the bottom bar, sized with dynamic viewport units. When the phone keyboard opens, the screen follows the visible area so the input stays in view.
 
 ## PWA install
@@ -144,10 +154,11 @@ Location: src/features/ai-chat. Route: /debby, signed in users only, with the bo
 - Offline content: only generic daily task titles and the weekly tip text are kept in localStorage (`src/features/pwa/offlineCache.ts`), so Daily and Home can show what was last loaded when there is no internet.
 
 ## Settings
-- `/settings` (SettingsPage, under the bottom bar). Rows: Dark mode, Daily reminders, Reminder time, Language, Install the app, Privacy policy, Terms of use, Log out.
+- `/settings` (SettingsPage, under the bottom bar). Rows: Dark mode, Daily reminders, Reminder time, Language, Clear what Debby remembers, Install the app, Privacy policy, Terms of use, Log out.
 - Dark mode (`src/features/settings/darkMode.ts`): saved on the device in localStorage as light, dark or system; system follows the phone setting and is the default. The `.dark` class on `<html>` switches the tokens in `src/styles.css`; `initTheme` runs once in `src/routes/__root.tsx`.
 - Reminders save `reminders_enabled` and `reminder_time` to her own private_profiles row only. The screen says "Reminders will start soon." — sending is built later.
 - Language shows English with the note "Debby answers in the language you write."
+- Clear what Debby remembers (debbyMemory.ts): opens a dialog ("Debby will forget the short notes she keeps about you. Your chats stay. She will still know your week and stage."). Clear updates her own chat_summaries row with an empty summary; having no row yet counts as success. A short confirmation shows on the Settings screen. Her chats are never touched by this.
 
 ## Profile
 - `/profile` (ProfilePage): her name, her week and due date with an "Edit date" button to /pregnancy-date, and her stage, state, first baby answer and baby birth date when they exist. "Edit details" opens a form for full name, stage, first baby, state and baby birth date; it saves to her own private_profiles row with the same rules as signup step 3 (`detailsUpdate` in `src/features/profile/details.ts`, birth date never in the future) and shows friendly errors. A row links to /settings. Log out lives in Settings, not on Profile.
