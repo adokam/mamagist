@@ -13,5 +13,5 @@ export const Route = createFileRoute("/_tabs/debby")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: DebbyPage,
+  component: () => <DebbyPage chatId={null} />,
 });

@@ -9,6 +9,8 @@ import { privateProfileKey } from "@/features/profile/privateProfile";
 import { supabase } from "@/integrations/supabase/client";
 
 import { askDebby } from "./debbyApi";
+import { debbySupabase } from "./debbyChats";
+import type { DebbyReplyState } from "./debbyResponse";
 import { guideLine, MAX_MESSAGE_LENGTH, welcomeText } from "./debbyText";
 
 const HISTORY_PAGE = 50;
@@ -57,27 +59,39 @@ type HistoryRow = {
   created_at: string;
 };
 
-export function useDebbyChat() {
+/**
+ * Data for one Ask Debby chat. chatId is the open chat, or null for a new
+ * empty chat — a new chat only exists after the first message gets its
+ * reply, and the function creates it. History is loaded for the open chat
+ * only. onReply is called with every reply state (new chat id and title,
+ * and code "gone" when the chat no longer exists).
+ */
+export function useDebbyChat(
+  chatId: string | null,
+  onReply?: (state: DebbyReplyState) => void,
+) {
   const { user } = useAuth();
   const userId = user?.id ?? "";
 
   const profile = useQuery(debbyProfileQuery(userId));
   const today = useToday(profile.data?.timezone);
 
-  // Newest 50 first, then 50 older per page. Not refetched while open, so nothing shows twice.
+  // Newest 50 first, then 50 older per page, for this chat only. Not
+  // refetched while open, so nothing shows twice. A new chat has no history.
   const history = useInfiniteQuery({
-    queryKey: ["chat-messages", userId],
-    enabled: Boolean(userId),
+    queryKey: ["chat-messages", userId, chatId],
+    enabled: Boolean(userId) && chatId !== null,
     staleTime: Infinity,
     gcTime: 0,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     initialPageParam: null as string | null,
     queryFn: async ({ pageParam }): Promise<HistoryRow[]> => {
-      let query = supabase
+      let query = debbySupabase
         .from("chat_messages")
         .select("id, role, content, safety_triggered, created_at")
         .eq("user_id", userId)
+        .eq("chat_id", chatId)
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
         .limit(HISTORY_PAGE);
@@ -93,16 +107,31 @@ export function useDebbyChat() {
   const [local, setLocal] = useState<ChatItem[]>([]);
   const [sending, setSending] = useState(false);
   const [limitDay, setLimitDay] = useState<string | null>(null);
+  const [gone, setGone] = useState(false);
   const sendingRef = useRef(false);
   const nextId = useRef(0);
   const todayRef = useRef(today);
   todayRef.current = today;
+  const onReplyRef = useRef(onReply);
+  onReplyRef.current = onReply;
+
+  // Opening another chat starts it fresh: drop this chat's unsaved bubbles
+  // and the gone flag. (Adjusting state during render, the React pattern
+  // for resetting state when a prop changes.)
+  const [chatKey, setChatKey] = useState(chatId);
+  if (chatKey !== chatId) {
+    setChatKey(chatId);
+    setLocal([]);
+    setGone(false);
+    setLimitDay(null);
+  }
 
   const limited = limitDay !== null && limitDay === today;
 
   const items = useMemo((): ChatItem[] | null => {
-    if (!profile.data || !history.data) return null;
-    const rows = history.data.pages.flat().reverse();
+    if (!profile.data) return null;
+    if (chatId !== null && !history.data) return null;
+    const rows = (history.data?.pages.flat() ?? []).reverse();
     const saved: ChatItem[] = rows.map((row) =>
       row.role === "user"
         ? { id: row.id, from: "her", text: row.content }
@@ -129,7 +158,7 @@ export function useDebbyChat() {
           ]
         : [];
     return [...welcome, ...saved, ...local];
-  }, [profile.data, history.data, local]);
+  }, [profile.data, history.data, local, chatId]);
 
   /**
    * Sends her message. With `retryOf`, replaces that failed Debby bubble and does not add her bubble again.
@@ -159,7 +188,7 @@ export function useDebbyChat() {
         },
       ]);
 
-      void askDebby(message).then((state) => {
+      void askDebby(message, chatId).then((state) => {
         setLocal((current) =>
           current.map((item) =>
             item.id === pendingId
@@ -175,12 +204,14 @@ export function useDebbyChat() {
           ),
         );
         if (state.limitReached) setLimitDay(todayRef.current);
+        if (state.kind === "gone") setGone(true);
+        onReplyRef.current?.(state);
         sendingRef.current = false;
         setSending(false);
       });
       return true;
     },
-    [limited, userId],
+    [limited, userId, chatId],
   );
 
   const todayDate = parseIsoDate(today);
@@ -188,7 +219,11 @@ export function useDebbyChat() {
 
   return {
     status:
-      profile.isError || (history.isError && !history.data) ? "error" : items ? "ready" : "loading",
+      profile.isError || (chatId !== null && history.isError && !history.data)
+        ? "error"
+        : items
+          ? "ready"
+          : "loading",
     retryLoad: () => {
       if (profile.isError) void profile.refetch();
       if (history.isError) void history.refetch();
@@ -202,6 +237,7 @@ export function useDebbyChat() {
     loadEarlier: () => void history.fetchNextPage(),
     sending,
     limited,
+    gone,
     send,
   } as const;
 }

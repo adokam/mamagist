@@ -11,12 +11,14 @@ const body = (code: string, extra: Record<string, unknown> = {}) => ({
 
 describe("debbyReplyState", () => {
   it("ok shows the reply, no retry, input stays on", () => {
-    expect(debbyReplyState(body("ok", { remaining: 9 }))).toEqual({
+    expect(debbyReplyState(body("ok", { remaining: 9, chat_id: "chat-1" }))).toEqual({
       kind: "ok",
       text: "Reply text",
       tone: "normal",
       showRetry: false,
       limitReached: false,
+      chatId: "chat-1",
+      title: null,
     });
   });
 
@@ -27,6 +29,8 @@ describe("debbyReplyState", () => {
       tone: "safety",
       showRetry: false,
       limitReached: false,
+      chatId: null,
+      title: null,
     });
   });
 
@@ -37,6 +41,8 @@ describe("debbyReplyState", () => {
       tone: "normal",
       showRetry: false,
       limitReached: true,
+      chatId: null,
+      title: null,
     });
   });
 
@@ -74,8 +80,26 @@ describe("debbyReplyState", () => {
       tone: "normal",
       showRetry: true,
       limitReached: false,
+      chatId: null,
+      title: null,
     });
     expect(UNREACHABLE_TEXT).toBe("We could not reach Debby. Check your internet and try again.");
+  });
+
+  it("a new chat's first reply carries its id and title", () => {
+    expect(
+      debbyReplyState(body("ok", { chat_id: "chat-9", title: "Feeling sick" })),
+    ).toMatchObject({ kind: "ok", chatId: "chat-9", title: "Feeling sick" });
+  });
+
+  it("gone shows the reply with no Try again, so the screen can offer a new chat", () => {
+    expect(debbyReplyState(body("gone", { chat_id: "chat-1" }))).toMatchObject({
+      kind: "gone",
+      text: "Reply text",
+      showRetry: false,
+      limitReached: false,
+      chatId: "chat-1",
+    });
   });
 
   it("an unknown code or empty reply counts as a failed call", () => {

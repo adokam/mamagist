@@ -1,6 +1,6 @@
 // How Debby's answer is shown. Pure function, no screen code, so it can be tested.
 
-export const DEBBY_CODES = ["ok", "safety", "limit", "busy", "error", "too_long"] as const;
+export const DEBBY_CODES = ["ok", "safety", "limit", "busy", "error", "too_long", "gone"] as const;
 export type DebbyCode = (typeof DEBBY_CODES)[number];
 
 /** The JSON the debby-chat edge function returns. */
@@ -10,6 +10,10 @@ export type DebbyResponse = {
   safety_triggered: boolean;
   /** Messages left today. Only on ok and limit. */
   remaining?: number;
+  /** The chat this reply belongs to. Always present on ok/safety/limit/busy/error/too_long. */
+  chat_id?: string | null;
+  /** The chat's title. Only on a new chat's first reply. */
+  title?: string | null;
 };
 
 /** What the screen shows for one answer. */
@@ -23,6 +27,10 @@ export type DebbyReplyState = {
   showRetry: boolean;
   /** Turn the input off until her day changes. */
   limitReached: boolean;
+  /** The chat this reply belongs to, when the function sent one. */
+  chatId: string | null;
+  /** The chat's title, only on a new chat's first reply. */
+  title: string | null;
 };
 
 export const UNREACHABLE_TEXT = "We could not reach Debby. Check your internet and try again.";
@@ -47,6 +55,8 @@ export function debbyReplyState(body: unknown): DebbyReplyState {
       tone: "normal",
       showRetry: true,
       limitReached: false,
+      chatId: null,
+      title: null,
     };
   }
   const { code, reply } = body;
@@ -56,5 +66,7 @@ export function debbyReplyState(body: unknown): DebbyReplyState {
     tone: code === "safety" || body.safety_triggered === true ? "safety" : "normal",
     showRetry: code === "busy" || code === "error",
     limitReached: code === "limit",
+    chatId: typeof body.chat_id === "string" && body.chat_id !== "" ? body.chat_id : null,
+    title: typeof body.title === "string" && body.title !== "" ? body.title : null,
   };
 }

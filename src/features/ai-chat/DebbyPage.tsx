@@ -1,5 +1,7 @@
 import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 
+import { useNavigate } from "@tanstack/react-router";
+
 import { PrimaryButton } from "@/components/Buttons";
 import { LoadError } from "@/components/LoadError";
 import { TextInput } from "@/components/TextInput";
@@ -12,8 +14,20 @@ import { MAX_MESSAGE_LENGTH, SHOW_COUNTER_AFTER } from "./debbyText";
 import { useDebbyChat, type ChatItem } from "./useDebbyChat";
 import { useKeyboardViewport } from "./useKeyboardViewport";
 
-export function DebbyPage() {
-  const chat = useDebbyChat();
+/** One Debby chat. chatId is the open chat, or null for a new empty chat. */
+export function DebbyPage({ chatId }: { chatId: string | null }) {
+  const navigate = useNavigate();
+  const chat = useDebbyChat(chatId, (state) => {
+    // First reply of a new chat: the function created the chat. Move to its
+    // address without adding a history entry, so a refresh keeps the chat.
+    if (chatId === null && state.chatId) {
+      void navigate({
+        to: "/debby/$chatId",
+        params: { chatId: state.chatId },
+        replace: true,
+      });
+    }
+  });
   const keyboard = useKeyboardViewport();
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -50,7 +64,7 @@ export function DebbyPage() {
     if (chat.send(draft)) setDraft("");
   };
 
-  const inputOff = chat.sending || chat.limited || chat.status !== "ready";
+  const inputOff = chat.sending || chat.limited || chat.gone || chat.status !== "ready";
 
   return (
     <main
@@ -110,6 +124,18 @@ export function DebbyPage() {
             {chat.items.map((item) => (
               <Bubble key={item.id} item={item} onRetry={(id, msg) => chat.send(msg, id)} />
             ))}
+
+            {chat.gone ? (
+              <div className="flex justify-start">
+                <button
+                  type="button"
+                  onClick={() => void navigate({ to: "/debby" })}
+                  className="min-h-11 rounded-full border-[1.5px] border-primary px-5 text-[15px] font-bold text-foreground"
+                >
+                  Start a new chat
+                </button>
+              </div>
+            ) : null}
 
             {showChips ? (
               <div className="flex flex-wrap gap-2">

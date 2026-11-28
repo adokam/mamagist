@@ -1,16 +1,16 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { House, ListChecks, MessageCircleHeart, User, Users, type LucideIcon } from "lucide-react";
 
+import { debbyTabAction } from "@/features/ai-chat/debbyChats";
+import { cn } from "@/lib/utils";
+
 type BarItem = {
-  to: "/home" | "/debby" | "/community" | "/daily" | "/profile";
+  to: "/home" | "/community" | "/daily" | "/profile";
   label: string;
   icon: LucideIcon;
 };
 
-const leftItems: BarItem[] = [
-  { to: "/home", label: "Home", icon: House },
-  { to: "/debby", label: "Debby", icon: MessageCircleHeart },
-];
+const leftItems: BarItem[] = [{ to: "/home", label: "Home", icon: House }];
 const rightItems: BarItem[] = [
   { to: "/daily", label: "Daily", icon: ListChecks },
   { to: "/profile", label: "Profile", icon: User },
@@ -31,6 +31,39 @@ function SideItem({ item }: { item: BarItem }) {
   );
 }
 
+/**
+ * Debby is not a plain link: opening Debby always starts a new empty chat,
+ * except when she is already on a Debby screen, where tapping it does nothing.
+ */
+function DebbyItem() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const active = debbyTabAction(location.pathname) === "stay";
+  return (
+    <button
+      type="button"
+      aria-label="Debby"
+      onClick={() => {
+        if (debbyTabAction(location.pathname) === "new-chat") void navigate({ to: "/debby" });
+      }}
+      className={cn(
+        "flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-1 text-foreground",
+        active && "text-primary",
+      )}
+    >
+      <MessageCircleHeart className="h-[22px] w-[22px] shrink-0" strokeWidth={2} aria-hidden />
+      <span
+        className={cn(
+          "rounded-2xl px-3 py-1 text-[13px] leading-tight font-medium",
+          active && "bg-primary/12 font-bold text-primary",
+        )}
+      >
+        Debby
+      </span>
+    </button>
+  );
+}
+
 /** Shared bottom navigation. Fixed to the bottom of the 430px app column. */
 export function BottomBar() {
   return (
@@ -42,6 +75,8 @@ export function BottomBar() {
         {leftItems.map((item) => (
           <SideItem key={item.to} item={item} />
         ))}
+
+        <DebbyItem />
 
         <Link
           to="/community"

@@ -30,6 +30,7 @@ import { Route as CommunityCreatePostRouteImport } from './routes/community_.cre
 import { Route as SignupDetailsRouteImport } from './routes/signup_.details'
 import { Route as SignupPeriodRouteImport } from './routes/signup_.period'
 import { Route as TabsCommunityGroupsRouteImport } from './routes/_tabs.community.groups'
+import { Route as TabsDebbyChatIdRouteImport } from './routes/_tabs.debby.$chatId'
 import { Route as TabsCommunityGroupsGroupIdRouteImport } from './routes/_tabs.community.groups.$groupId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -136,6 +137,11 @@ const TabsCommunityGroupsRoute = TabsCommunityGroupsRouteImport.update({
   path: '/groups',
   getParentRoute: () => TabsCommunityRoute,
 } as any)
+const TabsDebbyChatIdRoute = TabsDebbyChatIdRouteImport.update({
+  id: '/$chatId',
+  path: '/$chatId',
+  getParentRoute: () => TabsDebbyRoute,
+} as any)
 const TabsCommunityGroupsGroupIdRoute =
   TabsCommunityGroupsGroupIdRouteImport.update({
     id: '/$groupId',
@@ -155,7 +161,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/community': typeof TabsCommunityRouteWithChildren
   '/daily': typeof TabsDailyRoute
-  '/debby': typeof TabsDebbyRoute
+  '/debby': typeof TabsDebbyRouteWithChildren
   '/home': typeof TabsHomeRoute
   '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
   '/community/groups': typeof TabsCommunityGroupsRouteWithChildren
+  '/debby/$chatId': typeof TabsDebbyChatIdRoute
   '/community/groups/$groupId': typeof TabsCommunityGroupsGroupIdRoute
 }
 export interface FileRoutesByTo {
@@ -178,7 +185,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/community': typeof TabsCommunityRouteWithChildren
   '/daily': typeof TabsDailyRoute
-  '/debby': typeof TabsDebbyRoute
+  '/debby': typeof TabsDebbyRouteWithChildren
   '/home': typeof TabsHomeRoute
   '/pregnancy-date': typeof TabsPregnancyDateRoute
   '/profile': typeof TabsProfileRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/signup/details': typeof SignupDetailsRoute
   '/signup/period': typeof SignupPeriodRoute
   '/community/groups': typeof TabsCommunityGroupsRouteWithChildren
+  '/debby/$chatId': typeof TabsDebbyChatIdRoute
   '/community/groups/$groupId': typeof TabsCommunityGroupsGroupIdRoute
 }
 export interface FileRoutesById {
@@ -203,7 +211,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_tabs/community': typeof TabsCommunityRouteWithChildren
   '/_tabs/daily': typeof TabsDailyRoute
-  '/_tabs/debby': typeof TabsDebbyRoute
+  '/_tabs/debby': typeof TabsDebbyRouteWithChildren
   '/_tabs/home': typeof TabsHomeRoute
   '/_tabs/pregnancy-date': typeof TabsPregnancyDateRoute
   '/_tabs/profile': typeof TabsProfileRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/signup_/details': typeof SignupDetailsRoute
   '/signup_/period': typeof SignupPeriodRoute
   '/_tabs/community/groups': typeof TabsCommunityGroupsRouteWithChildren
+  '/_tabs/debby/$chatId': typeof TabsDebbyChatIdRoute
   '/_tabs/community/groups/$groupId': typeof TabsCommunityGroupsGroupIdRoute
 }
 export interface FileRouteTypes {
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/signup/details'
     | '/signup/period'
     | '/community/groups'
+    | '/debby/$chatId'
     | '/community/groups/$groupId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/signup/details'
     | '/signup/period'
     | '/community/groups'
+    | '/debby/$chatId'
     | '/community/groups/$groupId'
   id:
     | '__root__'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/signup_/details'
     | '/signup_/period'
     | '/_tabs/community/groups'
+    | '/_tabs/debby/$chatId'
     | '/_tabs/community/groups/$groupId'
   fileRoutesById: FileRoutesById
 }
@@ -452,6 +464,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsCommunityGroupsRouteImport
       parentRoute: typeof TabsCommunityRoute
     }
+    '/_tabs/debby/$chatId': {
+      id: '/_tabs/debby/$chatId'
+      path: '/$chatId'
+      fullPath: '/debby/$chatId'
+      preLoaderRoute: typeof TabsDebbyChatIdRouteImport
+      parentRoute: typeof TabsDebbyRoute
+    }
     '/_tabs/community/groups/$groupId': {
       id: '/_tabs/community/groups/$groupId'
       path: '/$groupId'
@@ -485,10 +504,22 @@ const TabsCommunityRouteWithChildren = TabsCommunityRoute._addFileChildren(
   TabsCommunityRouteChildren,
 )
 
+interface TabsDebbyRouteChildren {
+  TabsDebbyChatIdRoute: typeof TabsDebbyChatIdRoute
+}
+
+const TabsDebbyRouteChildren: TabsDebbyRouteChildren = {
+  TabsDebbyChatIdRoute: TabsDebbyChatIdRoute,
+}
+
+const TabsDebbyRouteWithChildren = TabsDebbyRoute._addFileChildren(
+  TabsDebbyRouteChildren,
+)
+
 interface TabsRouteChildren {
   TabsCommunityRoute: typeof TabsCommunityRouteWithChildren
   TabsDailyRoute: typeof TabsDailyRoute
-  TabsDebbyRoute: typeof TabsDebbyRoute
+  TabsDebbyRoute: typeof TabsDebbyRouteWithChildren
   TabsHomeRoute: typeof TabsHomeRoute
   TabsPregnancyDateRoute: typeof TabsPregnancyDateRoute
   TabsProfileRoute: typeof TabsProfileRoute
@@ -498,7 +529,7 @@ interface TabsRouteChildren {
 const TabsRouteChildren: TabsRouteChildren = {
   TabsCommunityRoute: TabsCommunityRouteWithChildren,
   TabsDailyRoute: TabsDailyRoute,
-  TabsDebbyRoute: TabsDebbyRoute,
+  TabsDebbyRoute: TabsDebbyRouteWithChildren,
   TabsHomeRoute: TabsHomeRoute,
   TabsPregnancyDateRoute: TabsPregnancyDateRoute,
   TabsProfileRoute: TabsProfileRoute,
